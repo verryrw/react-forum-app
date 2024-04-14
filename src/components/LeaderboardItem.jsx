@@ -1,17 +1,23 @@
-export default function LeaderboardItem() {
+import PropTypes from "prop-types";
+
+export default function LeaderboardItem({ leaderboard }) {
   return (
     <div className="flex justify-between mt-4 items-center">
       <div className="flex gap-4 items-center">
         <img
-          src="https://ui-avatars.com/api/?name=Dimas Saputra&background=random"
+          src={leaderboard.user.avatar}
           alt=""
           width="50"
           height="50"
           className="object-cover rounded-full"
         />
-        <h2>Dimas Saputra</h2>
+        <h2>{leaderboard.user.name}</h2>
       </div>
-      <h1>25</h1>
+      <h1>{leaderboard.score}</h1>
     </div>
   );
 }
+
+LeaderboardItem.propTypes = {
+  leaderboard: PropTypes.object.isRequired,
+};

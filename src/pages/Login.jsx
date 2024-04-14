@@ -1,14 +1,24 @@
 import { Link } from "react-router-dom";
+import { PropTypes } from "prop-types";
+
 import TextInput from "../components/TextInput";
 import useInput from "../hooks/useInput";
+import { login } from "../utils/network-api";
 
-export default function Login() {
+export default function Login({ onLogin }) {
   const [email, emailChangeHandler] = useInput();
   const [password, passwordChangeHandler] = useInput();
 
-  function onSubmitHandler(event) {
+  async function onSubmitHandler(event) {
     event.preventDefault();
-    console.log("login");
+
+    const response = await login({ email, password });
+    if (response.error) {
+      alert(response.message);
+      return;
+    } else {
+      onLogin(response.data.token);
+    }
   }
 
   return (
@@ -44,3 +54,7 @@ export default function Login() {
     </div>
   );
 }
+
+Login.propTypes = {
+  onLogin: PropTypes.func.isRequired,
+};

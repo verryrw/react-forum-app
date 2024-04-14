@@ -18,7 +18,7 @@ async function register({ name, email, password }) {
       throw new Error(responseData.message);
     }
 
-    return { success: true, response: responseData };
+    return { success: true, data: responseData.data };
   } catch (e) {
     console.log(e.message);
     return { success: false, message: e.message };
@@ -26,7 +26,7 @@ async function register({ name, email, password }) {
 }
 
 async function login({ email, password }) {
-  const header = {
+  const options = {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -35,15 +35,15 @@ async function login({ email, password }) {
   };
 
   try {
-    const response = await fetch(BASE_URL + "/login", header);
+    const response = await fetch(BASE_URL + "/login", options);
     const responseData = await response.json();
     if (!response.ok) {
       throw new Error(responseData.message);
     }
 
-    return { success: true, response: responseData };
+    return { error: false, data: responseData.data };
   } catch (e) {
-    return { success: false, message: e.message };
+    return { error: true, message: e.message };
   }
 }
 
@@ -52,11 +52,105 @@ async function fetchWithToken(url, options) {
     ...options,
     headers: {
       ...options.headers,
-      Authorization: getAccessToken(),
+      Authorization: "Bearer " + getAccessToken(),
     },
   });
 
   return response;
 }
 
-export { register, login, fetchWithToken };
+async function getUserLogged() {
+  try {
+    const options = {
+      method: "GET",
+    };
+    const response = await fetchWithToken(BASE_URL + "/users/me", options);
+    const responseData = await response.json();
+    if (!response.ok) {
+      throw new Error(responseData.message);
+    }
+
+    return { error: false, data: responseData.data };
+  } catch (e) {
+    return { error: true, message: e.message };
+  }
+}
+
+async function getThreads() {
+  try {
+    const url = `${BASE_URL}/threads`;
+    const options = {
+      method: "GET",
+    };
+    const response = await fetchWithToken(url, options);
+    const responseData = await response.json();
+    if (!response.ok) {
+      throw new Error(responseData.message);
+    }
+    return { error: false, data: responseData.data };
+  } catch (e) {
+    return { error: true, message: e.message };
+  }
+}
+
+async function getThread(threadId) {
+  try {
+    const url = `${BASE_URL}/threads/${threadId}`;
+    const options = {
+      method: "GET",
+    };
+    const response = await fetch(url, options);
+    const responseData = await response.json();
+    if (!response.ok) {
+      throw new Error(responseData.message);
+    }
+
+    return { error: false, data: responseData.data };
+  } catch (e) {
+    return { error: true, message: e.message };
+  }
+}
+
+async function getUsers() {
+  try {
+    const url = `${BASE_URL}/users`;
+    const options = {
+      method: "GET",
+    };
+    const response = await fetch(url, options);
+    const responseData = await response.json();
+    if (!response.ok) {
+      throw new Error(responseData.message);
+    }
+    return { error: false, data: responseData.data };
+  } catch (e) {
+    return { error: true, message: e.message };
+  }
+}
+
+async function getLeaderboards() {
+  try {
+    const url = `${BASE_URL}/leaderboards`;
+    const options = {
+      method: "GET",
+    };
+    const response = await fetch(url, options);
+    const responseData = await response.json();
+    if (!response.ok) {
+      throw new Error(responseData.message);
+    }
+    return { error: false, data: responseData.data };
+  } catch (e) {
+    return { error: true, message: e.message };
+  }
+}
+
+export {
+  register,
+  login,
+  getUserLogged,
+  getThreads,
+  getThread,
+  getUsers,
+  getLeaderboards,
+};

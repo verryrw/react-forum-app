@@ -47,7 +47,7 @@ export default function Register() {
         />
         <button
           type="submit"
-          className="w-full border border-[#fd7014] p-2 rounded-md">
+          className="w-full border border-[#fd7014] p-2 mt-2 rounded-md">
           Daftar
         </button>
       </form>

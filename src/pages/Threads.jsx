@@ -1,13 +1,42 @@
 import { useNavigate } from "react-router-dom";
-import Badge from "../components/Badge";
-import ForumItem from "../components/ForumItem";
 import { IoMdAdd } from "react-icons/io";
+
+import Badge from "../components/Badge";
+import ThreadItem from "../components/ThreadItem";
+import { useEffect, useState } from "react";
+import { getThreads, getUsers } from "../utils/network-api";
 
 export default function Threads() {
   const navigate = useNavigate();
+  const [threads, setThreads] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchThreadsAndUsers() {
+      const fetchedThreads = await getThreads();
+      const fetchedUsers = await getUsers();
+      const threadsData = fetchedThreads.data.threads;
+      const usersData = fetchedUsers.data.users;
+      setThreads(
+        threadsData.map((thread) => ({
+          ...thread,
+          name: usersData.find((user) => user.id == thread.ownerId).name,
+        }))
+      );
+      setUsers(usersData);
+      setIsLoading(false);
+    }
+
+    fetchThreadsAndUsers();
+  }, []);
 
   function onAddHandler() {
     navigate("/threads/add");
+  }
+
+  if (isLoading) {
+    return <h1 className="mt-8 text-center">Loading...</h1>;
   }
 
   return (
@@ -19,9 +48,12 @@ export default function Threads() {
       <div className="my-4" />
       <section>
         <h1 className="mb-1 text-xl font-bold">Diskusi tersedia</h1>
-        <ForumItem />
-        <ForumItem />
-        <ForumItem />
+        {threads.map((thread) => (
+          <ThreadItem
+            key={thread.id}
+            thread={thread}
+          />
+        ))}
       </section>
       <section>
         <button
