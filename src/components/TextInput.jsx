@@ -13,6 +13,7 @@ export default function TextInput({
       placeholder={placeholder}
       value={value}
       onChange={onChangeHandler}
+      required
     />
   );
 }

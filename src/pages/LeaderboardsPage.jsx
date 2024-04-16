@@ -3,7 +3,7 @@ import LeaderboardItem from "../components/LeaderboardItem";
 import { useEffect } from "react";
 import { getLeaderboards } from "../utils/network-api";
 
-export default function Leaderboards() {
+export default function LeaderboardsPage() {
   const [leaderboards, setLeaderboards] = useState([]);
 
   useEffect(() => {

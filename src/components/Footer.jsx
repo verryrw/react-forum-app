@@ -4,7 +4,7 @@ import { IoMdLogIn, IoMdLogOut } from "react-icons/io";
 import { NavLink } from "react-router-dom";
 import PropTypes from "prop-types";
 
-export default function Footer({ isLoggedIn, logoutHandler }) {
+export default function Footer({ loggedInUser, logoutHandler }) {
   return (
     <footer>
       <div className="flex justify-center w-full bg-zinc-900">
@@ -24,7 +24,7 @@ export default function Footer({ isLoggedIn, logoutHandler }) {
               </div>
             </NavLink>
 
-            {!isLoggedIn && (
+            {!loggedInUser && (
               <NavLink to={"/login"}>
                 <div className="flex flex-col items-center p-2 hover:bg-black">
                   <IoMdLogIn />
@@ -33,7 +33,7 @@ export default function Footer({ isLoggedIn, logoutHandler }) {
               </NavLink>
             )}
 
-            {isLoggedIn && (
+            {loggedInUser && (
               <button
                 className="flex flex-col items-center p-2 hover:bg-black"
                 onClick={logoutHandler}>
@@ -49,6 +49,6 @@ export default function Footer({ isLoggedIn, logoutHandler }) {
 }
 
 Footer.propTypes = {
-  isLoggedIn: PropTypes.bool.isRequired,
+  loggedInUser: PropTypes.object.isRequired,
   logoutHandler: PropTypes.func.isRequired,
 };

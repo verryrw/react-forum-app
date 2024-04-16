@@ -145,6 +145,149 @@ async function getLeaderboards() {
   }
 }
 
+async function addThread(thread) {
+  try {
+    const url = `${BASE_URL}/threads`;
+    const options = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(thread),
+    };
+    const response = await fetchWithToken(url, options);
+    const responseData = await response.json();
+    if (!response.ok) {
+      throw new Error(responseData.message);
+    }
+    return { error: false, data: responseData.data };
+  } catch (e) {
+    return { error: true, message: e.message };
+  }
+}
+
+async function addThreadComment(threadId, content) {
+  try {
+    const url = `${BASE_URL}/threads/${threadId}/comments`;
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ content }),
+    };
+    const response = await fetchWithToken(url, options);
+    const responseData = await response.json();
+    if (!response.ok) {
+      throw new Error(responseData.message);
+    }
+
+    return { error: false, data: response.data };
+  } catch (e) {
+    return { error: true, message: e.message };
+  }
+}
+
+async function upVoteThread(threadId) {
+  try {
+    const url = `${BASE_URL}/threads/${threadId}/up-vote`;
+    const options = {
+      method: "POST",
+    };
+    const response = await fetchWithToken(url, options);
+    const responseData = await response.json();
+    if (!response.ok) {
+      throw new Error(responseData.message);
+    }
+    return { error: false, data: responseData.data };
+  } catch (e) {
+    return { error: true, data: e.message };
+  }
+}
+
+async function downVoteThread(threadId) {
+  try {
+    const url = `${BASE_URL}/threads/${threadId}/down-vote`;
+    const options = {
+      method: "POST",
+    };
+    const response = await fetchWithToken(url, options);
+    const responseData = await response.json();
+    if (!response.ok) {
+      throw new Error(responseData.message);
+    }
+    return { error: false, data: responseData.data };
+  } catch (e) {
+    return { error: true, data: e.message };
+  }
+}
+
+async function neutralizeVoteThread(threadId) {
+  try {
+    const url = `${BASE_URL}/threads/${threadId}/neutral-vote`;
+    const options = {
+      method: "POST",
+    };
+    const response = await fetchWithToken(url, options);
+    const responseData = await response.json();
+    if (!response.ok) {
+      throw new Error(responseData.message);
+    }
+    return { error: false, data: responseData.data };
+  } catch (e) {
+    return { error: true, data: e.message };
+  }
+}
+
+async function upVoteComment(threadId, commentId) {
+  try {
+    const url = `${BASE_URL}/threads/${threadId}/comments/${commentId}/up-vote`;
+    const options = {
+      method: "POST",
+    };
+    const response = await fetchWithToken(url, options);
+    const responseData = await response.json();
+    if (!response.ok) {
+      throw new Error(responseData.message);
+    }
+    return { error: false, data: responseData.data };
+  } catch (e) {
+    return { error: true, data: e.message };
+  }
+}
+
+async function downVoteComment(threadId, commentId) {
+  try {
+    const url = `${BASE_URL}/threads/${threadId}/comments/${commentId}/down-vote`;
+    const options = {
+      method: "POST",
+    };
+    const response = await fetchWithToken(url, options);
+    const responseData = await response.json();
+    if (!response.ok) {
+      throw new Error(responseData.message);
+    }
+    return { error: false, data: responseData.data };
+  } catch (e) {
+    return { error: true, data: e.message };
+  }
+}
+
+async function neutralizeVoteComment(threadId, commentId) {
+  try {
+    const url = `${BASE_URL}/threads/${threadId}/comments/${commentId}/neutral-vote`;
+    const options = {
+      method: "POST",
+    };
+    const response = await fetchWithToken(url, options);
+    const responseData = await response.json();
+    if (!response.ok) {
+      throw new Error(responseData.message);
+    }
+    return { error: false, data: responseData.data };
+  } catch (e) {
+    return { error: true, data: e.message };
+  }
+}
+
 export {
   register,
   login,
@@ -153,4 +296,12 @@ export {
   getThread,
   getUsers,
   getLeaderboards,
+  addThread,
+  addThreadComment,
+  upVoteThread,
+  downVoteThread,
+  neutralizeVoteThread,
+  upVoteComment,
+  downVoteComment,
+  neutralizeVoteComment,
 };

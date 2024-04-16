@@ -1,21 +1,27 @@
 import { useNavigate } from "react-router-dom";
 import { IoMdAdd } from "react-icons/io";
+import PropTypes from "prop-types";
 
 import Badge from "../components/Badge";
 import ThreadItem from "../components/ThreadItem";
 import { useEffect, useState } from "react";
 import { getThreads, getUsers } from "../utils/network-api";
 
-export default function Threads() {
+export default function ThreadsPage({ loggedInUser }) {
   const navigate = useNavigate();
   const [threads, setThreads] = useState([]);
-  const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function fetchThreadsAndUsers() {
       const fetchedThreads = await getThreads();
       const fetchedUsers = await getUsers();
+
+      if (fetchedThreads.error) {
+        alert(fetchedThreads.message);
+        return;
+      }
+
       const threadsData = fetchedThreads.data.threads;
       const usersData = fetchedUsers.data.users;
       setThreads(
@@ -24,7 +30,6 @@ export default function Threads() {
           name: usersData.find((user) => user.id == thread.ownerId).name,
         }))
       );
-      setUsers(usersData);
       setIsLoading(false);
     }
 
@@ -46,22 +51,29 @@ export default function Threads() {
         <Badge variant="outline">#test</Badge>
       </section>
       <div className="my-4" />
-      <section>
+      <section className="mb-24">
         <h1 className="mb-1 text-xl font-bold">Diskusi tersedia</h1>
         {threads.map((thread) => (
           <ThreadItem
             key={thread.id}
             thread={thread}
+            userId={loggedInUser.id}
           />
         ))}
       </section>
-      <section>
-        <button
-          className="rounded-md absolute right-4 bottom-4 bg-orange-500 hover:bg-orange-600 p-2 text-3xl font-bold drop-shadow-lg"
-          onClick={onAddHandler}>
-          <IoMdAdd />
-        </button>
-      </section>
+      {loggedInUser && (
+        <section>
+          <button
+            className="rounded-md absolute right-4 bottom-4 bg-orange-500 hover:bg-orange-600 p-2 text-3xl font-bold drop-shadow-lg"
+            onClick={onAddHandler}>
+            <IoMdAdd />
+          </button>
+        </section>
+      )}
     </div>
   );
 }
+
+ThreadsPage.propTypes = {
+  loggedInUser: PropTypes.object.isRequired,
+};

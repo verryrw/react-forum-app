@@ -7,28 +7,73 @@ import { BiLike, BiDislike, BiSolidLike, BiSolidDislike } from "react-icons/bi";
 import { BsReply } from "react-icons/bs";
 import { convertDateToTimeago } from "../utils";
 import Badge from "./Badge";
+import {
+  downVoteThread,
+  neutralizeVoteThread,
+  upVoteThread,
+} from "../utils/network-api";
 
-export default function ThreadItem({ thread }) {
-  const [isLike, setIsLike] = useState(false);
-  const [isDislike, setIsDislike] = useState(false);
+export default function ThreadItem({ thread, userId }) {
+  const isLikedByMe = thread.upVotesBy.find((upVoteId) => upVoteId === userId);
+  const isDislikedByMe = thread.downVotesBy.find(
+    (downVoteId) => downVoteId === userId
+  );
+  const [isLike, setIsLike] = useState(isLikedByMe);
+  const [isDislike, setIsDislike] = useState(isDislikedByMe);
+  const [totalLike, setTotalLike] = useState(thread.upVotesBy.length);
+  const [totalDislike, setTotalDislike] = useState(thread.downVotesBy.length);
 
-  function onLikeHandler() {
-    setIsLike(!isLike);
-    if (isDislike) {
-      setIsDislike(false);
+  function resetLikeAndDislike() {
+    setIsLike(false);
+    setIsDislike(false);
+    setTotalLike(thread.upVotesBy.length);
+    setTotalDislike(thread.downVotesBy.length);
+  }
+
+  async function onNeutralizeHandler() {
+    resetLikeAndDislike();
+
+    const response = await neutralizeVoteThread(thread.id);
+    if (response.error) {
+      alert("gagal neutralize: " + response.message);
+    } else {
+      console.log("berhasil neutralize");
     }
   }
 
-  function onDislikeHandler() {
-    setIsDislike(!isDislike);
-    if (isLike) {
+  async function onLikeHandler() {
+    resetLikeAndDislike();
+    setIsLike(true);
+    setTotalLike(thread.upVotesBy.length + 1);
+
+    const response = await upVoteThread(thread.id);
+    if (response.error) {
+      alert("gagal like: " + response.message);
       setIsLike(false);
+      setTotalLike(thread.upVotesBy.length);
+    } else {
+      console.log("berhasil like");
+    }
+  }
+
+  async function onDislikeHandler() {
+    resetLikeAndDislike();
+    setIsDislike(true);
+    setTotalDislike(thread.downVotesBy.length + 1);
+
+    const response = await downVoteThread(thread.id);
+    if (response.error) {
+      alert("gagal dislike: " + response.message);
+      setIsDislike(false);
+      setTotalDislike(thread.downVoteThreads.length);
+    } else {
+      console.log("berhasil dislike");
     }
   }
 
   return (
     <div className="p-2 border bg-[#393e46] rounded-md mb-2">
-      <Badge variant="outline">{thread.category}</Badge>
+      <Badge variant="outline">#{thread.category}</Badge>
       <h4 className="font-bold mt-1">
         <Link
           to={`/threads/${thread.id}`}
@@ -44,20 +89,20 @@ export default function ThreadItem({ thread }) {
         <div className="flex gap-2">
           <button
             className="flex items-center"
-            onClick={onLikeHandler}>
+            onClick={isLike ? onNeutralizeHandler : onLikeHandler}>
             {isLike ? <BiSolidLike /> : <BiLike />}
-            <span className="ms-1">{thread.upVotesBy.length}</span>
+            <span className="ms-1">{totalLike}</span>
           </button>
           <button
             className="flex items-center"
-            onClick={onDislikeHandler}>
+            onClick={isDislike ? onNeutralizeHandler : onDislikeHandler}>
             {isDislike ? <BiSolidDislike /> : <BiDislike />}
-            <span className="ms-1">0</span>
+            <span className="ms-1">{totalDislike}</span>
           </button>
-          <button className="flex items-center">
+          <span className="flex items-center">
             <BsReply />
             <span className="ms-1">{thread.totalComments}</span>
-          </button>
+          </span>
         </div>
         <span>{convertDateToTimeago(new Date(thread.createdAt))}</span>
         <span>
@@ -70,4 +115,5 @@ export default function ThreadItem({ thread }) {
 
 ThreadItem.propTypes = {
   thread: PropTypes.object.isRequired,
+  userId: PropTypes.string.isRequired,
 };

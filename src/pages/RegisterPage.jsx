@@ -1,30 +1,38 @@
-import { Link } from "react-router-dom";
-import { PropTypes } from "prop-types";
-
+import { useNavigate } from "react-router-dom";
 import TextInput from "../components/TextInput";
 import useInput from "../hooks/useInput";
-import { login } from "../utils/network-api";
+import { register } from "../utils/network-api";
 
-export default function Login({ onLogin }) {
+export default function RegisterPage() {
+  const navigate = useNavigate();
+  const [name, nameChangeHandler] = useInput();
   const [email, emailChangeHandler] = useInput();
   const [password, passwordChangeHandler] = useInput();
+
+  function onNavigateBack() {
+    navigate(-1, { replace: true });
+  }
 
   async function onSubmitHandler(event) {
     event.preventDefault();
 
-    const response = await login({ email, password });
-    if (response.error) {
-      alert(response.message);
-      return;
+    const response = await register({ name, email, password });
+    if (response.success) {
+      console.log(response);
     } else {
-      onLogin(response.data.token);
+      alert(response.message);
     }
   }
 
   return (
     <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">Login</h1>
+      <h1 className="text-xl font-bold mb-4">Daftar</h1>
       <form onSubmit={onSubmitHandler}>
+        <TextInput
+          placeholder="Nama"
+          value={name}
+          onChangeHandler={nameChangeHandler}
+        />
         <TextInput
           placeholder="Email"
           type="email"
@@ -40,21 +48,16 @@ export default function Login({ onLogin }) {
         <button
           type="submit"
           className="w-full border border-[#fd7014] p-2 mt-2 rounded-md">
-          Login
+          Daftar
         </button>
       </form>
-      <p className="mt-4 text-center">
-        Belum punya akun?{" "}
-        <Link
-          to={"/register"}
-          className="text-[#fd7014] font-bold underline">
-          Daftar di sini
-        </Link>
-      </p>
+      <div className="flex justify-center">
+        <button
+          className="mt-3 underline text-[#fd7014] font-bold"
+          onClick={onNavigateBack}>
+          Kembali
+        </button>
+      </div>
     </div>
   );
 }
-
-Login.propTypes = {
-  onLogin: PropTypes.func.isRequired,
-};

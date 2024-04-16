@@ -1,4 +1,4 @@
-export default function NotFound() {
+export default function NotFoundPage() {
   return (
     <div className="mt-12 text-center">
       <h1 className="text-lg font-bold">404 - Page Not Found</h1>

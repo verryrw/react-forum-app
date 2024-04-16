@@ -3,89 +3,91 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import Threads from "./pages/Threads";
-import Leaderboards from "./pages/Leaderboards";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import ThreadDetail from "./pages/ThreadDetail";
-import ThreadAdd from "./pages/ThreadAdd";
-import NotFound from "./pages/NotFound";
+import ThreadsPage from "./pages/ThreadsPage";
+import LeaderboardsPage from "./pages/LeaderboardsPage";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import ThreadDetailPage from "./pages/ThreadDetailPage";
+import ThreadAddPage from "./pages/ThreadAddPage";
+import NotFoundPage from "./pages/NotFoundPage";
 import { putAccessToken } from "./utils/local-api";
 import { getUserLogged } from "./utils/network-api";
 
 function App() {
   const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
+  const [loggedInUser, setLoggedInUser] = useState(null);
 
   useEffect(() => {
     async function getUser() {
       const response = await getUserLogged();
-      response.error ? setIsLoggedIn(false) : setIsLoggedIn(true);
+      response.error
+        ? setLoggedInUser(null)
+        : setLoggedInUser(response.data.user);
       setIsInitializing(false);
     }
 
     getUser();
   }, []);
 
-  function onLoggedInHandler(token) {
-    putAccessToken(token);
-    setIsLoggedIn(true);
+  function onLoggedInHandler(user) {
+    putAccessToken(user.token);
+    setLoggedInUser(user);
     navigate("/");
   }
 
   function onLoggedOutHandler() {
     putAccessToken(null);
-    setIsLoggedIn(false);
+    setLoggedInUser(null);
     navigate("/login");
   }
 
   if (isInitializing) return null;
 
   return (
-    <div className="h-screen max-w-4xl mx-auto flex flex-col bg-[#222831]">
+    <div className="min-h-screen max-w-4xl mx-auto flex flex-col bg-[#222831]">
       <Header />
       <div className="flex-1 relative">
         <main>
           <Routes>
             <Route
               path="/"
-              element={<Threads />}
+              element={<ThreadsPage loggedInUser={loggedInUser} />}
             />
             <Route
               path="/threads/:threadId"
-              element={<ThreadDetail />}
+              element={<ThreadDetailPage loggedInUser={loggedInUser} />}
             />
             <Route
               path="/threads/add"
-              element={<ThreadAdd />}
+              element={<ThreadAddPage />}
             />
             <Route
               path="/leaderboards"
-              element={<Leaderboards />}
+              element={<LeaderboardsPage />}
             />
-            {!isLoggedIn && (
+            {!loggedInUser && (
               <>
                 <Route
                   path="/login"
-                  element={<Login onLogin={onLoggedInHandler} />}
+                  element={<LoginPage onLogin={onLoggedInHandler} />}
                 />
                 <Route
                   path="/register"
-                  element={<Register />}
+                  element={<RegisterPage />}
                 />
               </>
             )}
 
             <Route
               path="*"
-              element={<NotFound />}
+              element={<NotFoundPage />}
             />
           </Routes>
         </main>
       </div>
       <Footer
-        isLoggedIn={isLoggedIn}
+        loggedInUser={loggedInUser}
         logoutHandler={onLoggedOutHandler}
       />
     </div>
