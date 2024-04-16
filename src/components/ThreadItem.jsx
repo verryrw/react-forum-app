@@ -13,21 +13,35 @@ import {
   upVoteThread,
 } from "../utils/network-api";
 
-export default function ThreadItem({ thread, userId }) {
-  const isLikedByMe = thread.upVotesBy.find((upVoteId) => upVoteId === userId);
+export default function ThreadItem({ thread, loggedInUser }) {
+  const isLikedByMe = thread.upVotesBy.find(
+    (upVoteId) => upVoteId === loggedInUser.id
+  );
   const isDislikedByMe = thread.downVotesBy.find(
-    (downVoteId) => downVoteId === userId
+    (downVoteId) => downVoteId === loggedInUser.id
   );
   const [isLike, setIsLike] = useState(isLikedByMe);
   const [isDislike, setIsDislike] = useState(isDislikedByMe);
-  const [totalLike, setTotalLike] = useState(thread.upVotesBy.length);
-  const [totalDislike, setTotalDislike] = useState(thread.downVotesBy.length);
+  const [upVotesBy, setUpVotesBy] = useState(thread.upVotesBy);
+  const [downVotesBy, setDownVotesBy] = useState(thread.downVotesBy);
+
+  function pushIfNotExists(array, item) {
+    const newArray = array;
+    if (newArray.indexOf(item) === -1) {
+      newArray.push(item);
+    }
+    return newArray;
+  }
 
   function resetLikeAndDislike() {
     setIsLike(false);
     setIsDislike(false);
-    setTotalLike(thread.upVotesBy.length);
-    setTotalDislike(thread.downVotesBy.length);
+    setUpVotesBy(
+      thread.upVotesBy.filter((upVoteId) => upVoteId !== loggedInUser.id)
+    );
+    setDownVotesBy(
+      thread.downVotesBy.filter((downVoteId) => downVoteId !== loggedInUser.id)
+    );
   }
 
   async function onNeutralizeHandler() {
@@ -44,13 +58,13 @@ export default function ThreadItem({ thread, userId }) {
   async function onLikeHandler() {
     resetLikeAndDislike();
     setIsLike(true);
-    setTotalLike(thread.upVotesBy.length + 1);
+    setUpVotesBy(pushIfNotExists(thread.upVotesBy, loggedInUser.id));
 
     const response = await upVoteThread(thread.id);
     if (response.error) {
       alert("gagal like: " + response.message);
       setIsLike(false);
-      setTotalLike(thread.upVotesBy.length);
+      setUpVotesBy(thread.upVotesBy.length);
     } else {
       console.log("berhasil like");
     }
@@ -59,13 +73,13 @@ export default function ThreadItem({ thread, userId }) {
   async function onDislikeHandler() {
     resetLikeAndDislike();
     setIsDislike(true);
-    setTotalDislike(thread.downVotesBy.length + 1);
+    setDownVotesBy(pushIfNotExists(thread.downVotesBy, loggedInUser.id));
 
     const response = await downVoteThread(thread.id);
     if (response.error) {
       alert("gagal dislike: " + response.message);
       setIsDislike(false);
-      setTotalDislike(thread.downVoteThreads.length);
+      setDownVotesBy(thread.downVoteThreads);
     } else {
       console.log("berhasil dislike");
     }
@@ -91,13 +105,13 @@ export default function ThreadItem({ thread, userId }) {
             className="flex items-center"
             onClick={isLike ? onNeutralizeHandler : onLikeHandler}>
             {isLike ? <BiSolidLike /> : <BiLike />}
-            <span className="ms-1">{totalLike}</span>
+            <span className="ms-1">{upVotesBy.length}</span>
           </button>
           <button
             className="flex items-center"
             onClick={isDislike ? onNeutralizeHandler : onDislikeHandler}>
             {isDislike ? <BiSolidDislike /> : <BiDislike />}
-            <span className="ms-1">{totalDislike}</span>
+            <span className="ms-1">{downVotesBy.length}</span>
           </button>
           <span className="flex items-center">
             <BsReply />
@@ -115,5 +129,5 @@ export default function ThreadItem({ thread, userId }) {
 
 ThreadItem.propTypes = {
   thread: PropTypes.object.isRequired,
-  userId: PropTypes.string.isRequired,
+  loggedInUser: PropTypes.object.isRequired,
 };

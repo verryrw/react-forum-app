@@ -57,7 +57,7 @@ export default function ThreadsPage({ loggedInUser }) {
           <ThreadItem
             key={thread.id}
             thread={thread}
-            userId={loggedInUser.id}
+            loggedInUser={loggedInUser}
           />
         ))}
       </section>

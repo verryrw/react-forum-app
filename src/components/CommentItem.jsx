@@ -2,22 +2,81 @@ import { useState } from "react";
 import { BiDislike, BiLike, BiSolidDislike, BiSolidLike } from "react-icons/bi";
 import PropTypes from "prop-types";
 import { convertDateToTimeago } from "../utils";
+import {
+  downVoteComment,
+  neutralizeVoteComment,
+  upVoteComment,
+} from "../utils/network-api";
 
-export default function CommentItem({ comment }) {
-  const [isLike, setIsLike] = useState(false);
-  const [isDislike, setIsDislike] = useState(false);
+export default function CommentItem({ comment, loggedInUser, threadId }) {
+  const isLikedByMe = comment.upVotesBy.find(
+    (upVoteId) => upVoteId === loggedInUser.id
+  );
+  const isDislikedByMe = comment.downVotesBy.find(
+    (downVoteId) => downVoteId === loggedInUser.id
+  );
+  const [isLike, setIsLike] = useState(isLikedByMe);
+  const [isDislike, setIsDislike] = useState(isDislikedByMe);
+  const [upVotesBy, setUpVotesBy] = useState(comment.upVotesBy);
+  const [downVotesBy, setDownVotesBy] = useState(comment.downVotesBy);
 
-  function onLikeHandler() {
-    setIsLike(!isLike);
-    if (isDislike) {
-      setIsDislike(false);
+  function pushIfNotExists(array, item) {
+    const newArray = array;
+    if (newArray.indexOf(item) === -1) {
+      newArray.push(item);
+    }
+    return newArray;
+  }
+
+  function resetLikeAndDislike() {
+    setIsLike(false);
+    setIsDislike(false);
+    setUpVotesBy(
+      comment.upVotesBy.filter((upVoteId) => upVoteId !== loggedInUser.id)
+    );
+    setDownVotesBy(
+      comment.downVotesBy.filter((downVoteId) => downVoteId !== loggedInUser.id)
+    );
+  }
+
+  async function onNeutralizeHandler() {
+    resetLikeAndDislike();
+
+    const response = await neutralizeVoteComment(threadId, comment.id);
+    if (response.error) {
+      alert("gagal neutralize: " + response.message);
+    } else {
+      console.log("berhasil neutralize");
     }
   }
 
-  function onDislikeHandler() {
-    setIsDislike(!isDislike);
-    if (isLike) {
+  async function onLikeHandler() {
+    resetLikeAndDislike();
+    setIsLike(true);
+    setUpVotesBy(pushIfNotExists(comment.upVotesBy, loggedInUser.id));
+
+    const response = await upVoteComment(threadId, comment.id);
+    if (response.error) {
+      alert("gagal like: " + response.message);
       setIsLike(false);
+      setUpVotesBy(comment.upVotesBy.length);
+    } else {
+      console.log("berhasil like");
+    }
+  }
+
+  async function onDislikeHandler() {
+    resetLikeAndDislike();
+    setIsDislike(true);
+    setDownVotesBy(pushIfNotExists(comment.downVotesBy, loggedInUser.id));
+
+    const response = await downVoteComment(threadId, comment.id);
+    if (response.error) {
+      alert("gagal dislike: " + response.message);
+      setIsDislike(false);
+      setDownVotesBy(comment.downVoteComments);
+    } else {
+      console.log("berhasil dislike");
     }
   }
 
@@ -41,15 +100,15 @@ export default function CommentItem({ comment }) {
       <div className="flex gap-2 mt-2">
         <button
           className="flex items-center"
-          onClick={onLikeHandler}>
+          onClick={isLike ? onNeutralizeHandler : onLikeHandler}>
           {isLike ? <BiSolidLike /> : <BiLike />}
-          <span className="ms-1">{comment.upVotesBy.length}</span>
+          <span className="ms-1">{upVotesBy.length}</span>
         </button>
         <button
           className="flex items-center"
-          onClick={onDislikeHandler}>
+          onClick={isDislike ? onNeutralizeHandler : onDislikeHandler}>
           {isDislike ? <BiSolidDislike /> : <BiDislike />}
-          <span className="ms-1">0</span>
+          <span className="ms-1">{downVotesBy.length}</span>
         </button>
       </div>
       <hr className="my-4 bg-gray-700" />
@@ -59,4 +118,6 @@ export default function CommentItem({ comment }) {
 
 CommentItem.propTypes = {
   comment: PropTypes.object.isRequired,
+  loggedInUser: PropTypes.object.isRequired,
+  threadId: PropTypes.string.isRequired,
 };
