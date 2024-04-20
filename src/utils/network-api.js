@@ -11,18 +11,13 @@ async function register({ name, email, password }) {
     body: JSON.stringify({ name: name, email: email, password: password }),
   };
 
-  try {
-    const response = await fetch(BASE_URL + "/register", header);
-    const responseData = await response.json();
-    if (!response.ok) {
-      throw new Error(responseData.message);
-    }
-
-    return { success: true, data: responseData.data };
-  } catch (e) {
-    console.log(e.message);
-    return { success: false, message: e.message };
+  const response = await fetch(BASE_URL + "/register", header);
+  const responseData = await response.json();
+  if (!response.ok) {
+    throw new Error(responseData.message);
   }
+
+  return responseData.data;
 }
 
 async function login({ email, password }) {
@@ -33,18 +28,13 @@ async function login({ email, password }) {
     },
     body: JSON.stringify({ email: email, password: password }),
   };
-
-  try {
-    const response = await fetch(BASE_URL + "/login", options);
-    const responseData = await response.json();
-    if (!response.ok) {
-      throw new Error(responseData.message);
-    }
-
-    return { error: false, data: responseData.data };
-  } catch (e) {
-    return { error: true, message: e.message };
+  const response = await fetch(BASE_URL + "/login", options);
+  const responseData = await response.json();
+  if (!response.ok) {
+    throw new Error(responseData.message);
   }
+
+  return responseData.data.data.accessToken;
 }
 
 async function fetchWithToken(url, options) {
@@ -60,20 +50,16 @@ async function fetchWithToken(url, options) {
 }
 
 async function getUserLogged() {
-  try {
-    const options = {
-      method: "GET",
-    };
-    const response = await fetchWithToken(BASE_URL + "/users/me", options);
-    const responseData = await response.json();
-    if (!response.ok) {
-      throw new Error(responseData.message);
-    }
-
-    return { error: false, data: responseData.data };
-  } catch (e) {
-    return { error: true, message: e.message };
+  const options = {
+    method: "GET",
+  };
+  const response = await fetchWithToken(BASE_URL + "/users/me", options);
+  const responseData = await response.json();
+  if (!response.ok) {
+    throw new Error(responseData.message);
   }
+
+  return responseData.data.data.user;
 }
 
 async function getThreads() {
@@ -199,7 +185,7 @@ async function upVoteThread(threadId) {
     }
     return { error: false, data: responseData.data };
   } catch (e) {
-    return { error: true, data: e.message };
+    return { error: true, message: e.message };
   }
 }
 
@@ -216,7 +202,7 @@ async function downVoteThread(threadId) {
     }
     return { error: false, data: responseData.data };
   } catch (e) {
-    return { error: true, data: e.message };
+    return { error: true, message: e.message };
   }
 }
 
@@ -233,7 +219,7 @@ async function neutralizeVoteThread(threadId) {
     }
     return { error: false, data: responseData.data };
   } catch (e) {
-    return { error: true, data: e.message };
+    return { error: true, message: e.message };
   }
 }
 
@@ -250,7 +236,7 @@ async function upVoteComment(threadId, commentId) {
     }
     return { error: false, data: responseData.data };
   } catch (e) {
-    return { error: true, data: e.message };
+    return { error: true, message: e.message };
   }
 }
 
@@ -267,7 +253,7 @@ async function downVoteComment(threadId, commentId) {
     }
     return { error: false, data: responseData.data };
   } catch (e) {
-    return { error: true, data: e.message };
+    return { error: true, message: e.message };
   }
 }
 
@@ -284,7 +270,7 @@ async function neutralizeVoteComment(threadId, commentId) {
     }
     return { error: false, data: responseData.data };
   } catch (e) {
-    return { error: true, data: e.message };
+    return { error: true, message: e.message };
   }
 }
 

@@ -20,10 +20,8 @@ function App() {
 
   useEffect(() => {
     async function getUser() {
-      const response = await getUserLogged();
-      response.error
-        ? setLoggedInUser(null)
-        : setLoggedInUser(response.data.user);
+      const authUser = await getUserLogged();
+      authUser.error ? setLoggedInUser(null) : setLoggedInUser(authUser);
       setIsInitializing(false);
     }
 
