@@ -75,5 +75,5 @@ export default function ThreadsPage({ loggedInUser }) {
 }
 
 ThreadsPage.propTypes = {
-  loggedInUser: PropTypes.object.isRequired,
+  loggedInUser: PropTypes.object,
 };

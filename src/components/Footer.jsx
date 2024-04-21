@@ -49,6 +49,6 @@ export default function Footer({ loggedInUser, logoutHandler }) {
 }
 
 Footer.propTypes = {
-  loggedInUser: PropTypes.object.isRequired,
-  logoutHandler: PropTypes.func.isRequired,
+  loggedInUser: PropTypes.object,
+  logoutHandler: PropTypes.func,
 };

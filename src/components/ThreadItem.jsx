@@ -15,10 +15,10 @@ import {
 
 export default function ThreadItem({ thread, loggedInUser }) {
   const isLikedByMe = thread.upVotesBy.find(
-    (upVoteId) => upVoteId === loggedInUser.id
+    (upVoteId) => upVoteId === loggedInUser?.id
   );
   const isDislikedByMe = thread.downVotesBy.find(
-    (downVoteId) => downVoteId === loggedInUser.id
+    (downVoteId) => downVoteId === loggedInUser?.id
   );
   const [isLike, setIsLike] = useState(isLikedByMe);
   const [isDislike, setIsDislike] = useState(isDislikedByMe);
@@ -37,10 +37,10 @@ export default function ThreadItem({ thread, loggedInUser }) {
     setIsLike(false);
     setIsDislike(false);
     setUpVotesBy(
-      thread.upVotesBy.filter((upVoteId) => upVoteId !== loggedInUser.id)
+      thread.upVotesBy.filter((upVoteId) => upVoteId !== loggedInUser?.id)
     );
     setDownVotesBy(
-      thread.downVotesBy.filter((downVoteId) => downVoteId !== loggedInUser.id)
+      thread.downVotesBy.filter((downVoteId) => downVoteId !== loggedInUser?.id)
     );
   }
 
@@ -58,7 +58,7 @@ export default function ThreadItem({ thread, loggedInUser }) {
   async function onLikeHandler() {
     resetLikeAndDislike();
     setIsLike(true);
-    setUpVotesBy(pushIfNotExists(thread.upVotesBy, loggedInUser.id));
+    setUpVotesBy(pushIfNotExists(thread.upVotesBy, loggedInUser?.id));
 
     const response = await upVoteThread(thread.id);
     if (response.error) {
@@ -73,7 +73,7 @@ export default function ThreadItem({ thread, loggedInUser }) {
   async function onDislikeHandler() {
     resetLikeAndDislike();
     setIsDislike(true);
-    setDownVotesBy(pushIfNotExists(thread.downVotesBy, loggedInUser.id));
+    setDownVotesBy(pushIfNotExists(thread.downVotesBy, loggedInUser?.id));
 
     const response = await downVoteThread(thread.id);
     if (response.error) {
@@ -128,6 +128,6 @@ export default function ThreadItem({ thread, loggedInUser }) {
 }
 
 ThreadItem.propTypes = {
-  thread: PropTypes.object.isRequired,
-  loggedInUser: PropTypes.object.isRequired,
+  thread: PropTypes.object,
+  loggedInUser: PropTypes.object,
 };

@@ -221,5 +221,5 @@ export default function ThreadDetailPage({ loggedInUser }) {
 }
 
 ThreadDetailPage.propTypes = {
-  loggedInUser: PropTypes.object.isRequired,
+  loggedInUser: PropTypes.object,
 };

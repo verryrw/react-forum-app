@@ -34,7 +34,7 @@ async function login({ email, password }) {
     throw new Error(responseData.message);
   }
 
-  return responseData.data.data.accessToken;
+  return responseData.data.accessToken;
 }
 
 async function fetchWithToken(url, options) {
@@ -59,7 +59,7 @@ async function getUserLogged() {
     throw new Error(responseData.message);
   }
 
-  return responseData.data.data.user;
+  return responseData.data.user;
 }
 
 async function getThreads() {
