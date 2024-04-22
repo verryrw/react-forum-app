@@ -34,7 +34,7 @@ async function login({ email, password }) {
     throw new Error(responseData.message);
   }
 
-  return responseData.data.accessToken;
+  return responseData.data.token;
 }
 
 async function fetchWithToken(url, options) {

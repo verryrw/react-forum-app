@@ -3,7 +3,8 @@ import { PropTypes } from "prop-types";
 
 import TextInput from "../components/TextInput";
 import useInput from "../hooks/useInput";
-import { login } from "../utils/network-api";
+import { getUserLogged, login } from "../utils/network-api";
+import { putAccessToken } from "../utils/local-api";
 
 export default function LoginPage({ onLogin }) {
   const [email, emailChangeHandler] = useInput();
@@ -12,12 +13,13 @@ export default function LoginPage({ onLogin }) {
   async function onSubmitHandler(event) {
     event.preventDefault();
 
-    const response = await login({ email, password });
-    if (response.error) {
-      alert(response.message);
-      return;
-    } else {
-      onLogin(response.data);
+    try {
+      const token = await login({ email, password });
+      putAccessToken(token);
+      const user = await getUserLogged();
+      onLogin(user);
+    } catch (err) {
+      alert(err.message);
     }
   }
 

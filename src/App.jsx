@@ -35,7 +35,6 @@ function App() {
   }, []);
 
   function onLoggedInHandler(user) {
-    putAccessToken(user.token);
     setLoggedInUser(user);
     navigate("/");
   }

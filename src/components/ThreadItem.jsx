@@ -56,6 +56,10 @@ export default function ThreadItem({ thread, loggedInUser }) {
   }
 
   async function onLikeHandler() {
+    if (!loggedInUser) {
+      alert("Please login first");
+      return;
+    }
     resetLikeAndDislike();
     setIsLike(true);
     setUpVotesBy(pushIfNotExists(thread.upVotesBy, loggedInUser?.id));
@@ -71,6 +75,10 @@ export default function ThreadItem({ thread, loggedInUser }) {
   }
 
   async function onDislikeHandler() {
+    if (!loggedInUser) {
+      alert("Please login first");
+      return;
+    }
     resetLikeAndDislike();
     setIsDislike(true);
     setDownVotesBy(pushIfNotExists(thread.downVotesBy, loggedInUser?.id));

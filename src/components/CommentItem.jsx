@@ -51,6 +51,10 @@ export default function CommentItem({ comment, loggedInUser, threadId }) {
   }
 
   async function onLikeHandler() {
+    if (!loggedInUser) {
+      alert("Please login first");
+      return;
+    }
     resetLikeAndDislike();
     setIsLike(true);
     setUpVotesBy(pushIfNotExists(comment.upVotesBy, loggedInUser.id));
@@ -66,6 +70,10 @@ export default function CommentItem({ comment, loggedInUser, threadId }) {
   }
 
   async function onDislikeHandler() {
+    if (!loggedInUser) {
+      alert("Please login first");
+      return;
+    }
     resetLikeAndDislike();
     setIsDislike(true);
     setDownVotesBy(pushIfNotExists(comment.downVotesBy, loggedInUser.id));
@@ -118,6 +126,6 @@ export default function CommentItem({ comment, loggedInUser, threadId }) {
 
 CommentItem.propTypes = {
   comment: PropTypes.object.isRequired,
-  loggedInUser: PropTypes.object.isRequired,
+  loggedInUser: PropTypes.object,
   threadId: PropTypes.string.isRequired,
 };
