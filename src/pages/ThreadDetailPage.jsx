@@ -38,10 +38,10 @@ export default function ThreadDetailPage({ loggedInUser }) {
         const thread = response.data.detailThread;
         setThread(thread);
         const isLikedByMe = thread.upVotesBy.find(
-          (upVoteId) => upVoteId === loggedInUser.id
+          (upVoteId) => upVoteId === loggedInUser?.id
         );
         const isDislikedByMe = thread.downVotesBy.find(
-          (downVoteId) => downVoteId === loggedInUser.id
+          (downVoteId) => downVoteId === loggedInUser?.id
         );
         setIsLike(isLikedByMe);
         setIsDislike(isDislikedByMe);
@@ -53,7 +53,7 @@ export default function ThreadDetailPage({ loggedInUser }) {
     }
 
     fetchThread();
-  }, [loggedInUser.id, threadId]);
+  }, [loggedInUser?.id, navigate, threadId]);
 
   function pushIfNotExists(array, item) {
     const newArray = array;
@@ -67,10 +67,10 @@ export default function ThreadDetailPage({ loggedInUser }) {
     setIsLike(false);
     setIsDislike(false);
     setUpVotesBy(
-      thread.upVotesBy.filter((upVoteId) => upVoteId !== loggedInUser.id)
+      thread.upVotesBy.filter((upVoteId) => upVoteId !== loggedInUser?.id)
     );
     setDownVotesBy(
-      thread.downVotesBy.filter((downVoteId) => downVoteId !== loggedInUser.id)
+      thread.downVotesBy.filter((downVoteId) => downVoteId !== loggedInUser?.id)
     );
   }
 
@@ -88,7 +88,7 @@ export default function ThreadDetailPage({ loggedInUser }) {
   async function onLikeHandler() {
     resetLikeAndDislike();
     setIsLike(true);
-    setUpVotesBy(pushIfNotExists(thread.upVotesBy, loggedInUser.id));
+    setUpVotesBy(pushIfNotExists(thread.upVotesBy, loggedInUser?.id));
 
     const response = await upVoteThread(thread.id);
     if (response.error) {
@@ -103,7 +103,7 @@ export default function ThreadDetailPage({ loggedInUser }) {
   async function onDislikeHandler() {
     resetLikeAndDislike();
     setIsDislike(true);
-    setDownVotesBy(pushIfNotExists(thread.downVotesBy, loggedInUser.id));
+    setDownVotesBy(pushIfNotExists(thread.downVotesBy, loggedInUser?.id));
 
     const response = await downVoteThread(thread.id);
     if (response.error) {
