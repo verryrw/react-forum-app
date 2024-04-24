@@ -63,20 +63,16 @@ async function getUserLogged() {
 }
 
 async function getThreads() {
-  try {
-    const url = `${BASE_URL}/threads`;
-    const options = {
-      method: "GET",
-    };
-    const response = await fetchWithToken(url, options);
-    const responseData = await response.json();
-    if (!response.ok) {
-      throw new Error(responseData.message);
-    }
-    return { error: false, data: responseData.data };
-  } catch (e) {
-    return { error: true, message: e.message };
+  const url = `${BASE_URL}/threads`;
+  const options = {
+    method: "GET",
+  };
+  const response = await fetchWithToken(url, options);
+  const responseData = await response.json();
+  if (!response.ok) {
+    throw new Error(responseData.message);
   }
+  return { error: false, data: responseData.data };
 }
 
 async function getThread(threadId) {
@@ -93,180 +89,140 @@ async function getThread(threadId) {
 }
 
 async function getUsers() {
-  try {
-    const url = `${BASE_URL}/users`;
-    const options = {
-      method: "GET",
-    };
-    const response = await fetch(url, options);
-    const responseData = await response.json();
-    if (!response.ok) {
-      throw new Error(responseData.message);
-    }
-    return { error: false, data: responseData.data };
-  } catch (e) {
-    return { error: true, message: e.message };
+  const url = `${BASE_URL}/users`;
+  const options = {
+    method: "GET",
+  };
+  const response = await fetch(url, options);
+  const responseData = await response.json();
+  if (!response.ok) {
+    throw new Error(responseData.message);
   }
+  return { error: false, data: responseData.data };
 }
 
 async function getLeaderboards() {
-  try {
-    const url = `${BASE_URL}/leaderboards`;
-    const options = {
-      method: "GET",
-    };
-    const response = await fetch(url, options);
-    const responseData = await response.json();
-    if (!response.ok) {
-      throw new Error(responseData.message);
-    }
-    return { error: false, data: responseData.data };
-  } catch (e) {
-    return { error: true, message: e.message };
+  const url = `${BASE_URL}/leaderboards`;
+  const options = {
+    method: "GET",
+  };
+  const response = await fetch(url, options);
+  const responseData = await response.json();
+  if (!response.ok) {
+    throw new Error(responseData.message);
   }
+  return { error: false, data: responseData.data };
 }
 
 async function addThread(thread) {
-  try {
-    const url = `${BASE_URL}/threads`;
-    const options = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(thread),
-    };
-    const response = await fetchWithToken(url, options);
-    const responseData = await response.json();
-    if (!response.ok) {
-      throw new Error(responseData.message);
-    }
-    return { error: false, data: responseData.data };
-  } catch (e) {
-    return { error: true, message: e.message };
+  const url = `${BASE_URL}/threads`;
+  const options = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(thread),
+  };
+  const response = await fetchWithToken(url, options);
+  const responseData = await response.json();
+  if (!response.ok) {
+    throw new Error(responseData.message);
   }
+  return { error: false, data: responseData.data };
 }
 
 async function addThreadComment(threadId, content) {
-  try {
-    const url = `${BASE_URL}/threads/${threadId}/comments`;
-    const options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ content }),
-    };
-    const response = await fetchWithToken(url, options);
-    const responseData = await response.json();
-    if (!response.ok) {
-      throw new Error(responseData.message);
-    }
-
-    return { error: false, data: response.data };
-  } catch (e) {
-    return { error: true, message: e.message };
+  const url = `${BASE_URL}/threads/${threadId}/comments`;
+  const options = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ content }),
+  };
+  const response = await fetchWithToken(url, options);
+  const responseData = await response.json();
+  if (!response.ok) {
+    throw new Error(responseData.message);
   }
+
+  return { error: false, data: response.data };
 }
 
 async function upVoteThread(threadId) {
-  try {
-    const url = `${BASE_URL}/threads/${threadId}/up-vote`;
-    const options = {
-      method: "POST",
-    };
-    const response = await fetchWithToken(url, options);
-    const responseData = await response.json();
-    if (!response.ok) {
-      throw new Error(responseData.message);
-    }
-    return { error: false, data: responseData.data };
-  } catch (e) {
-    return { error: true, message: e.message };
+  const url = `${BASE_URL}/threads/${threadId}/up-vote`;
+  const options = {
+    method: "POST",
+  };
+  const response = await fetchWithToken(url, options);
+  const responseData = await response.json();
+  if (!response.ok) {
+    throw new Error(responseData.message);
   }
+  return { error: false, data: responseData.data };
 }
 
 async function downVoteThread(threadId) {
-  try {
-    const url = `${BASE_URL}/threads/${threadId}/down-vote`;
-    const options = {
-      method: "POST",
-    };
-    const response = await fetchWithToken(url, options);
-    const responseData = await response.json();
-    if (!response.ok) {
-      throw new Error(responseData.message);
-    }
-    return { error: false, data: responseData.data };
-  } catch (e) {
-    return { error: true, message: e.message };
+  const url = `${BASE_URL}/threads/${threadId}/down-vote`;
+  const options = {
+    method: "POST",
+  };
+  const response = await fetchWithToken(url, options);
+  const responseData = await response.json();
+  if (!response.ok) {
+    throw new Error(responseData.message);
   }
+  return { error: false, data: responseData.data };
 }
 
 async function neutralizeVoteThread(threadId) {
-  try {
-    const url = `${BASE_URL}/threads/${threadId}/neutral-vote`;
-    const options = {
-      method: "POST",
-    };
-    const response = await fetchWithToken(url, options);
-    const responseData = await response.json();
-    if (!response.ok) {
-      throw new Error(responseData.message);
-    }
-    return { error: false, data: responseData.data };
-  } catch (e) {
-    return { error: true, message: e.message };
+  const url = `${BASE_URL}/threads/${threadId}/neutral-vote`;
+  const options = {
+    method: "POST",
+  };
+  const response = await fetchWithToken(url, options);
+  const responseData = await response.json();
+  if (!response.ok) {
+    throw new Error(responseData.message);
   }
+  return { error: false, data: responseData.data };
 }
 
 async function upVoteComment(threadId, commentId) {
-  try {
-    const url = `${BASE_URL}/threads/${threadId}/comments/${commentId}/up-vote`;
-    const options = {
-      method: "POST",
-    };
-    const response = await fetchWithToken(url, options);
-    const responseData = await response.json();
-    if (!response.ok) {
-      throw new Error(responseData.message);
-    }
-    return { error: false, data: responseData.data };
-  } catch (e) {
-    return { error: true, message: e.message };
+  const url = `${BASE_URL}/threads/${threadId}/comments/${commentId}/up-vote`;
+  const options = {
+    method: "POST",
+  };
+  const response = await fetchWithToken(url, options);
+  const responseData = await response.json();
+  if (!response.ok) {
+    throw new Error(responseData.message);
   }
+  return { error: false, data: responseData.data };
 }
 
 async function downVoteComment(threadId, commentId) {
-  try {
-    const url = `${BASE_URL}/threads/${threadId}/comments/${commentId}/down-vote`;
-    const options = {
-      method: "POST",
-    };
-    const response = await fetchWithToken(url, options);
-    const responseData = await response.json();
-    if (!response.ok) {
-      throw new Error(responseData.message);
-    }
-    return { error: false, data: responseData.data };
-  } catch (e) {
-    return { error: true, message: e.message };
+  const url = `${BASE_URL}/threads/${threadId}/comments/${commentId}/down-vote`;
+  const options = {
+    method: "POST",
+  };
+  const response = await fetchWithToken(url, options);
+  const responseData = await response.json();
+  if (!response.ok) {
+    throw new Error(responseData.message);
   }
+  return { error: false, data: responseData.data };
 }
 
 async function neutralizeVoteComment(threadId, commentId) {
-  try {
-    const url = `${BASE_URL}/threads/${threadId}/comments/${commentId}/neutral-vote`;
-    const options = {
-      method: "POST",
-    };
-    const response = await fetchWithToken(url, options);
-    const responseData = await response.json();
-    if (!response.ok) {
-      throw new Error(responseData.message);
-    }
-    return { error: false, data: responseData.data };
-  } catch (e) {
-    return { error: true, message: e.message };
+  const url = `${BASE_URL}/threads/${threadId}/comments/${commentId}/neutral-vote`;
+  const options = {
+    method: "POST",
+  };
+  const response = await fetchWithToken(url, options);
+  const responseData = await response.json();
+  if (!response.ok) {
+    throw new Error(responseData.message);
   }
+  return { error: false, data: responseData.data };
 }
 
 export {

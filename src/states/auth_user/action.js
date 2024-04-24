@@ -44,4 +44,10 @@ function asyncUnsetAuthUser() {
   };
 }
 
-export { asyncSetAuthUser, asyncUnsetAuthUser };
+export {
+  ActionType,
+  setAuthUserActionCreator,
+  unsetAuthUserActionCreator,
+  asyncSetAuthUser,
+  asyncUnsetAuthUser,
+};

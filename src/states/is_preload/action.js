@@ -1,5 +1,5 @@
 import { getUserLogged } from "../../utils/network-api";
-import { asyncSetAuthUser } from "../auth_user/action";
+import { setAuthUserActionCreator } from "../auth_user/action";
 
 const ActionType = {
   SET_IS_PRELOAD: "SET_IS_PRELOAD",
@@ -18,12 +18,14 @@ function asyncSetIsPreload() {
   return async (dispatch) => {
     try {
       dispatch(setIsPreloadActionCreator(true));
-      dispatch(asyncSetAuthUser());
+      const user = await getUserLogged();
+      dispatch(setAuthUserActionCreator(user));
     } catch (e) {
+      dispatch(setAuthUserActionCreator(null));
     } finally {
       dispatch(setIsPreloadActionCreator(false));
     }
   };
 }
 
-export {};
+export { ActionType, setIsPreloadActionCreator, asyncSetIsPreload };
