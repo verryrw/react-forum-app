@@ -23,32 +23,15 @@ export default function ThreadDetailPage({ loggedInUser }) {
   const [isLoading, setIsLoading] = useState(true);
   const [comment, setComment] = useState("");
 
-  const [isLike, setIsLike] = useState(false);
-  const [isDislike, setIsDislike] = useState(false);
-  const [upVotesBy, setUpVotesBy] = useState([]);
-  const [downVotesBy, setDownVotesBy] = useState([]);
-
   useEffect(() => {
     async function fetchThread() {
-      const response = await getThread(threadId);
-      if (response.error) {
-        alert(response.message);
-        navigate("/");
-      } else {
-        const thread = response.data.detailThread;
+      try {
+        const thread = await getThread(threadId);
         setThread(thread);
-        const isLikedByMe = thread.upVotesBy.find(
-          (upVoteId) => upVoteId === loggedInUser?.id
-        );
-        const isDislikedByMe = thread.downVotesBy.find(
-          (downVoteId) => downVoteId === loggedInUser?.id
-        );
-        setIsLike(isLikedByMe);
-        setIsDislike(isDislikedByMe);
-        setUpVotesBy(thread.upVotesBy);
-        setDownVotesBy(thread.downVotesBy);
-
         setIsLoading(false);
+      } catch (err) {
+        alert(err.message);
+        navigate("/");
       }
     }
 
@@ -57,21 +40,27 @@ export default function ThreadDetailPage({ loggedInUser }) {
 
   function pushIfNotExists(array, item) {
     const newArray = array;
-    if (newArray.indexOf(item) === -1) {
+    if (!newArray.includes(item)) {
       newArray.push(item);
     }
+
     return newArray;
   }
 
   function resetLikeAndDislike() {
-    setIsLike(false);
-    setIsDislike(false);
-    setUpVotesBy(
-      thread.upVotesBy.filter((upVoteId) => upVoteId !== loggedInUser?.id)
+    const newUpVotesBy = thread.upVotesBy.filter(
+      (upVoteId) => upVoteId !== loggedInUser?.id
     );
-    setDownVotesBy(
-      thread.downVotesBy.filter((downVoteId) => downVoteId !== loggedInUser?.id)
+    const newDownVotesBy = thread.downVotesBy.filter(
+      (downVoteId) => downVoteId !== loggedInUser?.id
     );
+    const newThread = {
+      ...thread,
+      upVotesBy: newUpVotesBy,
+      downVotesBy: newDownVotesBy,
+    };
+
+    setThread(newThread);
   }
 
   async function onNeutralizeHandler() {
@@ -85,20 +74,36 @@ export default function ThreadDetailPage({ loggedInUser }) {
     }
   }
 
+  function isLikedByMe() {
+    return thread.upVotesBy.find(
+      (upVoteUserId) => upVoteUserId === loggedInUser?.id
+    );
+  }
+
+  function isDislikedByMe() {
+    return thread.downVotesBy.find(
+      (downVoteUserId) => downVoteUserId === loggedInUser?.id
+    );
+  }
+
   async function onLikeHandler() {
     if (!loggedInUser) {
       alert("Please login first");
       return;
     }
     resetLikeAndDislike();
-    setIsLike(true);
-    setUpVotesBy(pushIfNotExists(thread.upVotesBy, loggedInUser?.id));
+
+    console.log("after reset: ");
+    console.log(thread);
+    setThread({
+      ...thread,
+      upVotesBy: pushIfNotExists(thread.upVotesBy, loggedInUser?.id),
+    });
 
     const response = await upVoteThread(thread.id);
     if (response.error) {
       alert("gagal like: " + response.message);
-      setIsLike(false);
-      setUpVotesBy(thread.upVotesBy.length);
+      // setUpVotesBy(thread.upVotesBy.length);
     } else {
       console.log("berhasil like");
     }
@@ -110,14 +115,17 @@ export default function ThreadDetailPage({ loggedInUser }) {
       return;
     }
     resetLikeAndDislike();
-    setIsDislike(true);
-    setDownVotesBy(pushIfNotExists(thread.downVotesBy, loggedInUser?.id));
+    setThread((prevState) => {
+      return {
+        ...prevState,
+        downVotesBy: pushIfNotExists(prevState.downVotesBy, loggedInUser?.id),
+      };
+    });
 
     const response = await downVoteThread(thread.id);
     if (response.error) {
       alert("gagal dislike: " + response.message);
-      setIsDislike(false);
-      setDownVotesBy(thread.downVoteThreads);
+      // setDownVotesBy(thread.downVoteThreads);
     } else {
       console.log("berhasil dislike");
     }
@@ -159,15 +167,15 @@ export default function ThreadDetailPage({ loggedInUser }) {
           <div className="flex gap-2">
             <button
               className="flex items-center"
-              onClick={isLike ? onNeutralizeHandler : onLikeHandler}>
-              {isLike ? <BiSolidLike /> : <BiLike />}
-              <span className="ms-1">{upVotesBy.length}</span>
+              onClick={isLikedByMe() ? onNeutralizeHandler : onLikeHandler}>
+              {isLikedByMe() ? <BiSolidLike /> : <BiLike />}
+              <span className="ms-1">{thread.upVotesBy.length}</span>
             </button>
             <button
               className="flex items-center"
-              onClick={isDislike ? onNeutralizeHandler : onDislikeHandler}>
-              {isDislike ? <BiSolidDislike /> : <BiDislike />}
-              <span className="ms-1">{downVotesBy.length}</span>
+              onClick={isLikedByMe() ? onNeutralizeHandler : onDislikeHandler}>
+              {isLikedByMe() ? <BiSolidDislike /> : <BiDislike />}
+              <span className="ms-1">{thread.downVotesBy.length}</span>
             </button>
           </div>
           <span className="flex">

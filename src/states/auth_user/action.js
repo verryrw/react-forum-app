@@ -37,9 +37,11 @@ function asyncSetAuthUser(email, password) {
   };
 }
 
-export {
-  ActionType,
-  setAuthUserActionCreator,
-  unsetAuthUserActionCreator,
-  asyncSetAuthUser,
-};
+function asyncUnsetAuthUser() {
+  return (dispatch) => {
+    dispatch(unsetAuthUserActionCreator());
+    putAccessToken("");
+  };
+}
+
+export { asyncSetAuthUser, asyncUnsetAuthUser };

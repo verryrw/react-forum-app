@@ -80,21 +80,16 @@ async function getThreads() {
 }
 
 async function getThread(threadId) {
-  try {
-    const url = `${BASE_URL}/threads/${threadId}`;
-    const options = {
-      method: "GET",
-    };
-    const response = await fetch(url, options);
-    const responseData = await response.json();
-    if (!response.ok) {
-      throw new Error(responseData.message);
-    }
-
-    return { error: false, data: responseData.data };
-  } catch (e) {
-    return { error: true, message: e.message };
+  const url = `${BASE_URL}/threads/${threadId}`;
+  const options = {
+    method: "GET",
+  };
+  const response = await fetch(url, options);
+  const responseData = await response.json();
+  if (!response.ok) {
+    throw new Error(responseData.message);
   }
+  return responseData.data.detailThread;
 }
 
 async function getUsers() {
