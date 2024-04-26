@@ -10,11 +10,11 @@ const ActionType = {
   TOGGLE_THREAD_COMMENT_DISLIKE: "TOGGLE_THREAD_COMMENT_DISLIKE",
 };
 
-function receiveThreadDetailActionCreator(thread) {
+function receiveThreadDetailActionCreator(threadDetail) {
   return {
     type: ActionType.RECEIVE_THREAD_DETAIL,
     payload: {
-      thread: thread,
+      threadDetail: threadDetail,
     },
   };
 }
@@ -37,11 +37,30 @@ function toggleThreadLikeActionCreator(isLike) {
   };
 }
 
+function addThreadCommentActionCreator(comment) {
+  return {
+    type: ActionType.ADD_THREAD_COMMENT,
+    payload: {
+      comment: comment,
+    },
+  };
+}
+
+function asyncAddThreadComment(commentBody) {
+  return async (dispatch) {
+    try {
+      dispatch();
+    } catch(e) {
+      alert(e.message);
+    }
+  }
+}
+
 function asyncGetThreadDetail(threadId) {
   return async (dispatch) => {
     try {
-      const thread = await getThread(threadId);
-      dispatch(receiveThreadDetailActionCreator(thread)); //
+      const threadDetail = await getThread(threadId);
+      dispatch(receiveThreadDetailActionCreator(threadDetail));
     } catch (err) {
       alert(err.message);
     }
