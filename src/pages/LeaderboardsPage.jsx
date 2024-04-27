@@ -1,23 +1,15 @@
-import { useState } from "react";
 import LeaderboardItem from "../components/LeaderboardItem";
 import { useEffect } from "react";
-import { getLeaderboards } from "../utils/network-api";
+import { useDispatch, useSelector } from "react-redux";
+import { asyncReceiveLeaderboards } from "../states/leaderboards/action";
 
 export default function LeaderboardsPage() {
-  const [leaderboards, setLeaderboards] = useState([]);
+  const dispatch = useDispatch();
+  const { leaderboards } = useSelector((states) => states);
 
   useEffect(() => {
-    async function fetchLeaderboards() {
-      const response = await getLeaderboards();
-      if (response.error) {
-        alert(response.message);
-      } else {
-        setLeaderboards(response.data.leaderboards);
-      }
-    }
-
-    fetchLeaderboards();
-  }, []);
+    dispatch(asyncReceiveLeaderboards());
+  }, [dispatch]);
 
   return (
     <div className="p-4">
@@ -27,7 +19,7 @@ export default function LeaderboardsPage() {
         <h2>Skor</h2>
       </div>
       <div className="leaderboards-table__content">
-        {leaderboards.map((leaderboard) => (
+        {leaderboards?.map((leaderboard) => (
           <LeaderboardItem
             key={leaderboard.user.id}
             leaderboard={leaderboard}

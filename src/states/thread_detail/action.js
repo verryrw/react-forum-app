@@ -1,4 +1,8 @@
-import { getThread } from "../../utils/network-api";
+import {
+  addThreadComment,
+  getThread,
+  upVoteThread,
+} from "../../utils/network-api";
 
 const ActionType = {
   RECEIVE_THREAD_DETAIL: "RECEIVE_THREAD_DETAIL",
@@ -28,16 +32,7 @@ function clearThreadDetailActionCreator() {
   };
 }
 
-function toggleThreadLikeActionCreator(isLike) {
-  return {
-    type: ActionType,
-    payload: {
-      isLike: isLike,
-    },
-  };
-}
-
-function addThreadCommentActionCreator(comment) {
+function addThreadDetailCommentActionCreator(comment) {
   return {
     type: ActionType.ADD_THREAD_COMMENT,
     payload: {
@@ -46,17 +41,57 @@ function addThreadCommentActionCreator(comment) {
   };
 }
 
-function asyncAddThreadComment(commentBody) {
-  return async (dispatch) {
-    try {
-      dispatch();
-    } catch(e) {
-      alert(e.message);
-    }
-  }
+function toggleThreadDetailLikeActionCreator(threadId, userId) {
+  return {
+    type: ActionType,
+    payload: {
+      threadId: threadId,
+      userId: userId,
+    },
+  };
 }
 
-function asyncGetThreadDetail(threadId) {
+function toggleThreadDetailDislikeActionCreator(threadId, userId) {
+  return {
+    type: ActionType,
+    payload: {
+      threadId: threadId,
+      userId: userId,
+    },
+  };
+}
+
+function toggleThreadDetailCommentLikeActionCreator({
+  threadId,
+  commentId,
+  userId,
+}) {
+  return {
+    type: ActionType,
+    payload: {
+      threadId: threadId,
+      commentId: commentId,
+      userId: userId,
+    },
+  };
+}
+
+function toggleThreadDetailCommentDislikeActionCreator({
+  threadId,
+  commentId,
+  userId,
+}) {
+  return {
+    type: ActionType,
+    payload: {
+      threadId: threadId,
+      commentId: commentId,
+      userId: userId,
+    },
+  };
+}
+
+function asyncReceiveThreadDetail(threadId) {
   return async (dispatch) => {
     try {
       const threadDetail = await getThread(threadId);
@@ -67,10 +102,98 @@ function asyncGetThreadDetail(threadId) {
   };
 }
 
+function asyncAddThreadDetailComment(threadId, commentBody) {
+  return async (dispatch) => {
+    try {
+      const comment = await addThreadComment(threadId, commentBody);
+      dispatch(addThreadDetailCommentActionCreator(comment));
+    } catch (e) {
+      alert(e.message);
+    }
+  };
+}
+
+function asyncToggleThreadDetailLike(threadId) {
+  return async (dispatch, getState) => {
+    const { authUser } = getState();
+    dispatch(toggleThreadDetailLikeActionCreator(threadId, authUser.id));
+    try {
+      await upVoteThread(threadId);
+    } catch (e) {
+      dispatch(toggleThreadDetailLikeActionCreator(threadId, authUser.id));
+    }
+  };
+}
+
+function asyncToggleThreadDetailDislike(threadId) {
+  return async (dispatch, getState) => {
+    const { authUser } = getState();
+    dispatch(toggleThreadDetailDislikeActionCreator(threadId, authUser.id));
+    try {
+      await upVoteThread(threadId);
+    } catch (e) {
+      dispatch(toggleThreadDetailDislikeActionCreator(threadId, authUser.id));
+    }
+  };
+}
+
+function asyncToggleThreadDetailCommentLike(threadId, commentId) {
+  return async (dispatch, getState) => {
+    const { authUser } = getState();
+    dispatch(
+      toggleThreadDetailCommentLikeActionCreator({
+        threadId: threadId,
+        commentId: commentId,
+        userId: authUser.id,
+      })
+    );
+    try {
+      await upVoteThread(threadId);
+    } catch (e) {
+      dispatch(
+        toggleThreadDetailCommentLikeActionCreator({
+          threadId: threadId,
+          commentId: commentId,
+          userId: authUser.id,
+        })
+      );
+    }
+  };
+}
+
+function asyncToggleThreadDetailCommentDislike(threadId, commentId) {
+  return async (dispatch, getState) => {
+    const { authUser } = getState();
+    dispatch(
+      toggleThreadDetailCommentDislikeActionCreator({
+        threadId: threadId,
+        commentId: commentId,
+        userId: authUser.id,
+      })
+    );
+    try {
+      await upVoteThread(threadId);
+    } catch (e) {
+      dispatch(
+        toggleThreadDetailCommentDislikeActionCreator({
+          threadId: threadId,
+          commentId: commentId,
+          userId: authUser.id,
+        })
+      );
+    }
+  };
+}
+
 export {
   ActionType,
   receiveThreadDetailActionCreator,
   clearThreadDetailActionCreator,
-  toggleThreadLikeActionCreator,
-  asyncGetThreadDetail,
+  toggleThreadDetailLikeActionCreator,
+  asyncReceiveThreadDetail,
+  asyncAddThreadDetailComment,
+  asyncToggleThreadDetailLike,
+  asyncToggleThreadDetailDislike,
+  asyncToggleThreadDetailCommentLike,
+  asyncToggleThreadDetailCommentDislike,
 };

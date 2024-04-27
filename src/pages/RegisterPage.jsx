@@ -1,10 +1,12 @@
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+
 import TextInput from "../components/TextInput";
 import useInput from "../hooks/useInput";
-import { register } from "../utils/network-api";
-
+import { asyncRegister } from "../states/users/action";
 export default function RegisterPage() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [name, nameChangeHandler] = useInput();
   const [email, emailChangeHandler] = useInput();
   const [password, passwordChangeHandler] = useInput();
@@ -16,12 +18,7 @@ export default function RegisterPage() {
   async function onSubmitHandler(event) {
     event.preventDefault();
 
-    const response = await register({ name, email, password });
-    if (response.success) {
-      console.log(response);
-    } else {
-      alert(response.message);
-    }
+    dispatch(asyncRegister({ name, email, password }));
   }
 
   return (

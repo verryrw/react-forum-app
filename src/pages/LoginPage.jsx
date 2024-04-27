@@ -1,26 +1,18 @@
 import { Link } from "react-router-dom";
-import { PropTypes } from "prop-types";
 
 import TextInput from "../components/TextInput";
 import useInput from "../hooks/useInput";
-import { getUserLogged, login } from "../utils/network-api";
-import { putAccessToken } from "../utils/local-api";
+import { useDispatch } from "react-redux";
+import { asyncSetAuthUser } from "../states/auth_user/action";
 
-export default function LoginPage({ onLogin }) {
+export default function LoginPage() {
   const [email, emailChangeHandler] = useInput();
   const [password, passwordChangeHandler] = useInput();
+  const dispatch = useDispatch();
 
-  async function onSubmitHandler(event) {
+  function onSubmitHandler(event) {
     event.preventDefault();
-
-    try {
-      const token = await login({ email, password });
-      putAccessToken(token);
-      const user = await getUserLogged();
-      onLogin(user);
-    } catch (err) {
-      alert(err.message);
-    }
+    dispatch(asyncSetAuthUser(email, password));
   }
 
   return (
@@ -56,7 +48,3 @@ export default function LoginPage({ onLogin }) {
     </div>
   );
 }
-
-LoginPage.propTypes = {
-  onLogin: PropTypes.func,
-};

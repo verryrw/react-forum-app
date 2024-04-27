@@ -1,4 +1,5 @@
-import { getUsers, register } from "../../utils/network-api";
+import { register } from "../../utils/network-api";
+import { asyncSetAuthUser } from "../auth_user/action";
 
 const ActionType = {
   RECEIVE_USERS: "RECEIVE_USERS",
@@ -13,24 +14,15 @@ function receiveUsersActionCreator(users) {
   };
 }
 
-// function asyncReceiveUsers() {
-//   return async (dispatch) => {
-//     try {
-//       const users = await getUsers();
-//       dispatch(receiveUsersActionCreator(users));
-//     } catch (e) {
-//       alert(e.message);
-//     }
-//   };
-// }
-
-async function asyncRegister({ name, email, password }) {
-  try {
-    await register({ name, email, password });
-    alert("Successfully registered");
-  } catch (e) {
-    alert(e.message);
-  }
+function asyncRegister({ name, email, password }) {
+  return async (dispatch) => {
+    try {
+      await register({ name, email, password });
+      dispatch(asyncSetAuthUser(email, password));
+    } catch (e) {
+      alert(e.message);
+    }
+  };
 }
 
 export { ActionType, receiveUsersActionCreator, asyncRegister };

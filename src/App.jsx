@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -10,42 +11,17 @@ import RegisterPage from "./pages/RegisterPage";
 import ThreadDetailPage from "./pages/ThreadDetailPage";
 import ThreadAddPage from "./pages/ThreadAddPage";
 import NotFoundPage from "./pages/NotFoundPage";
-import { putAccessToken } from "./utils/local-api";
-import { getUserLogged } from "./utils/network-api";
+import { asyncSetIsPreload } from "./states/is_preload/action";
 
 function App() {
-  const navigate = useNavigate();
-  const [isInitializing, setIsInitializing] = useState(true);
-  const [loggedInUser, setLoggedInUser] = useState(null);
+  const dispatch = useDispatch();
+  const { isPreload, authUser } = useSelector((states) => states);
 
   useEffect(() => {
-    async function getUser() {
-      try {
-        const authUser = await getUserLogged();
-        setLoggedInUser(authUser);
-      } catch (error) {
-        console.log(error);
-        setLoggedInUser(null);
-      } finally {
-        setIsInitializing(false);
-      }
-    }
+    dispatch(asyncSetIsPreload());
+  }, [dispatch]);
 
-    getUser();
-  }, []);
-
-  function onLoggedInHandler(user) {
-    setLoggedInUser(user);
-    navigate("/");
-  }
-
-  function onLoggedOutHandler() {
-    putAccessToken(null);
-    setLoggedInUser(null);
-    navigate("/login");
-  }
-
-  if (isInitializing) return null;
+  if (isPreload) return null;
 
   return (
     <div className="min-h-screen max-w-4xl mx-auto flex flex-col bg-[#222831]">
@@ -55,11 +31,11 @@ function App() {
           <Routes>
             <Route
               path="/"
-              element={<ThreadsPage loggedInUser={loggedInUser} />}
+              element={<ThreadsPage />}
             />
             <Route
               path="/threads/:threadId"
-              element={<ThreadDetailPage loggedInUser={loggedInUser} />}
+              element={<ThreadDetailPage />}
             />
             <Route
               path="/threads/add"
@@ -69,11 +45,11 @@ function App() {
               path="/leaderboards"
               element={<LeaderboardsPage />}
             />
-            {!loggedInUser && (
+            {!authUser && (
               <>
                 <Route
                   path="/login"
-                  element={<LoginPage onLogin={onLoggedInHandler} />}
+                  element={<LoginPage />}
                 />
                 <Route
                   path="/register"
@@ -89,10 +65,7 @@ function App() {
           </Routes>
         </main>
       </div>
-      <Footer
-        loggedInUser={loggedInUser}
-        logoutHandler={onLoggedOutHandler}
-      />
+      <Footer />
     </div>
   );
 }

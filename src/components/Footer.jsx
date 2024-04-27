@@ -3,8 +3,17 @@ import { MdOutlineLeaderboard } from "react-icons/md";
 import { IoMdLogIn, IoMdLogOut } from "react-icons/io";
 import { NavLink } from "react-router-dom";
 import PropTypes from "prop-types";
+import { useDispatch, useSelector } from "react-redux";
+import { asyncUnsetAuthUser } from "../states/auth_user/action";
 
-export default function Footer({ loggedInUser, logoutHandler }) {
+export default function Footer() {
+  const { authUser } = useSelector((states) => states);
+  const dispatch = useDispatch();
+
+  function logoutHandler() {
+    dispatch(asyncUnsetAuthUser());
+  }
+
   return (
     <footer>
       <div className="flex justify-center w-full bg-zinc-900">
@@ -24,7 +33,7 @@ export default function Footer({ loggedInUser, logoutHandler }) {
               </div>
             </NavLink>
 
-            {!loggedInUser && (
+            {!authUser && (
               <NavLink to={"/login"}>
                 <div className="flex flex-col items-center p-2 hover:bg-black">
                   <IoMdLogIn />
@@ -33,7 +42,7 @@ export default function Footer({ loggedInUser, logoutHandler }) {
               </NavLink>
             )}
 
-            {loggedInUser && (
+            {authUser && (
               <button
                 className="flex flex-col items-center p-2 hover:bg-black"
                 onClick={logoutHandler}>

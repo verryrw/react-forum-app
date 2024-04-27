@@ -17,10 +17,10 @@ async function register({ name, email, password }) {
     throw new Error(responseData.message);
   }
 
-  return responseData.data;
+  return responseData.data.user;
 }
 
-async function login({ email, password }) {
+async function login(email, password) {
   const options = {
     method: "POST",
     headers: {
@@ -72,7 +72,7 @@ async function getThreads() {
   if (!response.ok) {
     throw new Error(responseData.message);
   }
-  return { error: false, data: responseData.data };
+  return responseData.data.threads;
 }
 
 async function getThread(threadId) {
@@ -82,9 +82,11 @@ async function getThread(threadId) {
   };
   const response = await fetch(url, options);
   const responseData = await response.json();
+
   if (!response.ok) {
     throw new Error(responseData.message);
   }
+
   return responseData.data.detailThread;
 }
 
@@ -98,7 +100,7 @@ async function getUsers() {
   if (!response.ok) {
     throw new Error(responseData.message);
   }
-  return { error: false, data: responseData.data };
+  return responseData.data.users;
 }
 
 async function getLeaderboards() {
@@ -111,7 +113,7 @@ async function getLeaderboards() {
   if (!response.ok) {
     throw new Error(responseData.message);
   }
-  return { error: false, data: responseData.data };
+  return responseData.data.leaderboards;
 }
 
 async function addThread(thread) {
@@ -126,7 +128,7 @@ async function addThread(thread) {
   if (!response.ok) {
     throw new Error(responseData.message);
   }
-  return { error: false, data: responseData.data };
+  return responseData.data.thread;
 }
 
 async function addThreadComment(threadId, content) {
@@ -144,7 +146,7 @@ async function addThreadComment(threadId, content) {
     throw new Error(responseData.message);
   }
 
-  return { error: false, data: response.data };
+  return { error: false, data: response.data.comment };
 }
 
 async function upVoteThread(threadId) {

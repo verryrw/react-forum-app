@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import {
   addThread,
   downVoteThread,
@@ -50,23 +51,18 @@ function toggleThreadDislikeActionCreator(threadId, userId) {
   };
 }
 
-function asyncAddThread({ title, category, description }) {
+function asyncAddThread({ title, category, body }) {
   return async (dispatch) => {
     try {
-      const thread = {
-        title: title,
-        category: category,
-        description: description,
-      };
-      await addThread(thread);
-      dispatch(addThreadActionCreator(thread));
+      const response = await addThread({ title, category, body });
+      dispatch(addThreadActionCreator(response));
     } catch (e) {
       alert(e.message);
     }
   };
 }
 
-function asyncThreadLike(threadId) {
+function asyncToggleThreadLike(threadId) {
   return async (dispatch, getState) => {
     const { authUser, threads } = getState();
     dispatch(toggleThreadLikeActionCreator(threadId, authUser.id));
@@ -84,7 +80,7 @@ function asyncThreadLike(threadId) {
   };
 }
 
-function asyncThreadDislike(threadId) {
+function asyncToggleThreadDislike(threadId) {
   return async (dispatch, getState) => {
     const { authUser, threads } = getState();
     dispatch(toggleThreadDislikeActionCreator(threadId, authUser.id));
@@ -109,6 +105,6 @@ export {
   toggleThreadLikeActionCreator,
   toggleThreadDislikeActionCreator,
   asyncAddThread,
-  asyncThreadLike,
-  asyncThreadDislike,
+  asyncToggleThreadLike,
+  asyncToggleThreadDislike,
 };

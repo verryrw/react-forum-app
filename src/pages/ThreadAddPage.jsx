@@ -1,15 +1,18 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+
 import ButtonBack from "../components/ButtonBack";
 import TextInput from "../components/TextInput";
 import useInput from "../hooks/useInput";
-import { addThread } from "../utils/network-api";
-import { useState } from "react";
+import { asyncAddThread } from "../states/threads/action";
 
 export default function ThreadAddPage() {
   const navigate = useNavigate();
   const [title, titleChangeHandler] = useInput();
   const [category, categoryChangeHandler] = useInput();
   const [body, setBody] = useState("");
+  const dispatch = useDispatch();
 
   function onBackHandler() {
     navigate("/", { replace: true });
@@ -17,18 +20,7 @@ export default function ThreadAddPage() {
 
   async function onSubmitHandler(event) {
     event.preventDefault();
-    const data = {
-      title: title,
-      category: category,
-      body: body,
-    };
-    const response = await addThread(data);
-    if (response.error) {
-      alert(response.message);
-      return;
-    } else {
-      navigate("/", { replace: true });
-    }
+    dispatch(asyncAddThread({ title, category, body }));
   }
 
   return (
