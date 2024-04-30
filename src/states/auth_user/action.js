@@ -1,17 +1,17 @@
-import { hideLoading, showLoading } from "react-redux-loading-bar";
-import { putAccessToken } from "../../utils/local-api";
-import { getUserLogged, login } from "../../utils/network-api";
+import { hideLoading, showLoading } from 'react-redux-loading-bar';
+import { putAccessToken } from '../../utils/local-api';
+import { getUserLogged, login } from '../../utils/network-api';
 
 const ActionType = {
-  SET_AUTH_USER: "SET_AUTH_USER",
-  UNSET_AUTH_USER: "UNSET_AUTH_USER",
+  SET_AUTH_USER: 'SET_AUTH_USER',
+  UNSET_AUTH_USER: 'UNSET_AUTH_USER',
 };
 
 function setAuthUserActionCreator(authUser) {
   return {
     type: ActionType.SET_AUTH_USER,
     payload: {
-      authUser: authUser,
+      authUser,
     },
   };
 }
@@ -46,7 +46,7 @@ function asyncUnsetAuthUser() {
   return (dispatch) => {
     dispatch(showLoading());
     dispatch(unsetAuthUserActionCreator());
-    putAccessToken("");
+    putAccessToken('');
     dispatch(hideLoading());
   };
 }

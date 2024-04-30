@@ -1,17 +1,17 @@
-import { getAccessToken } from "./local-api";
+import { getAccessToken } from './local-api';
 
-const BASE_URL = "https://forum-api.dicoding.dev/v1";
+const BASE_URL = 'https://forum-api.dicoding.dev/v1';
 
 async function register({ name, email, password }) {
   const header = {
-    method: "POST",
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ name: name, email: email, password: password }),
+    body: JSON.stringify({ name, email, password }),
   };
 
-  const response = await fetch(BASE_URL + "/register", header);
+  const response = await fetch(`${BASE_URL}/register`, header);
   const responseData = await response.json();
   if (!response.ok) {
     throw new Error(responseData.message);
@@ -22,13 +22,13 @@ async function register({ name, email, password }) {
 
 async function login(email, password) {
   const options = {
-    method: "POST",
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ email: email, password: password }),
+    body: JSON.stringify({ email, password }),
   };
-  const response = await fetch(BASE_URL + "/login", options);
+  const response = await fetch(`${BASE_URL}/login`, options);
   const responseData = await response.json();
   if (!response.ok) {
     throw new Error(responseData.message);
@@ -42,7 +42,7 @@ async function fetchWithToken(url, options) {
     ...options,
     headers: {
       ...options.headers,
-      Authorization: "Bearer " + getAccessToken(),
+      Authorization: `Bearer ${getAccessToken()}`,
     },
   });
 
@@ -51,9 +51,9 @@ async function fetchWithToken(url, options) {
 
 async function getUserLogged() {
   const options = {
-    method: "GET",
+    method: 'GET',
   };
-  const response = await fetchWithToken(BASE_URL + "/users/me", options);
+  const response = await fetchWithToken(`${BASE_URL}/users/me`, options);
   const responseData = await response.json();
   if (!response.ok) {
     throw new Error(responseData.message);
@@ -65,7 +65,7 @@ async function getUserLogged() {
 async function getThreads() {
   const url = `${BASE_URL}/threads`;
   const options = {
-    method: "GET",
+    method: 'GET',
   };
   const response = await fetchWithToken(url, options);
   const responseData = await response.json();
@@ -78,7 +78,7 @@ async function getThreads() {
 async function getThread(threadId) {
   const url = `${BASE_URL}/threads/${threadId}`;
   const options = {
-    method: "GET",
+    method: 'GET',
   };
   const response = await fetch(url, options);
   const responseData = await response.json();
@@ -93,7 +93,7 @@ async function getThread(threadId) {
 async function getUsers() {
   const url = `${BASE_URL}/users`;
   const options = {
-    method: "GET",
+    method: 'GET',
   };
   const response = await fetch(url, options);
   const responseData = await response.json();
@@ -106,7 +106,7 @@ async function getUsers() {
 async function getLeaderboards() {
   const url = `${BASE_URL}/leaderboards`;
   const options = {
-    method: "GET",
+    method: 'GET',
   };
   const response = await fetch(url, options);
   const responseData = await response.json();
@@ -119,8 +119,8 @@ async function getLeaderboards() {
 async function addThread(thread) {
   const url = `${BASE_URL}/threads`;
   const options = {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(thread),
   };
   const response = await fetchWithToken(url, options);
@@ -134,26 +134,24 @@ async function addThread(thread) {
 async function addThreadComment(threadId, content) {
   const url = `${BASE_URL}/threads/${threadId}/comments`;
   const options = {
-    method: "POST",
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({ content }),
   };
   const response = await fetchWithToken(url, options);
   const responseData = await response.json();
-  console.log(responseData);
   if (!response.ok) {
     throw new Error(responseData.message);
   }
-  console.log("sukses");
   return responseData.data.comment;
 }
 
 async function upVoteThread(threadId) {
   const url = `${BASE_URL}/threads/${threadId}/up-vote`;
   const options = {
-    method: "POST",
+    method: 'POST',
   };
   const response = await fetchWithToken(url, options);
   const responseData = await response.json();
@@ -166,7 +164,7 @@ async function upVoteThread(threadId) {
 async function downVoteThread(threadId) {
   const url = `${BASE_URL}/threads/${threadId}/down-vote`;
   const options = {
-    method: "POST",
+    method: 'POST',
   };
   const response = await fetchWithToken(url, options);
   const responseData = await response.json();
@@ -179,7 +177,7 @@ async function downVoteThread(threadId) {
 async function neutralizeVoteThread(threadId) {
   const url = `${BASE_URL}/threads/${threadId}/neutral-vote`;
   const options = {
-    method: "POST",
+    method: 'POST',
   };
   const response = await fetchWithToken(url, options);
   const responseData = await response.json();
@@ -192,7 +190,7 @@ async function neutralizeVoteThread(threadId) {
 async function upVoteComment(threadId, commentId) {
   const url = `${BASE_URL}/threads/${threadId}/comments/${commentId}/up-vote`;
   const options = {
-    method: "POST",
+    method: 'POST',
   };
   const response = await fetchWithToken(url, options);
   const responseData = await response.json();
@@ -205,7 +203,7 @@ async function upVoteComment(threadId, commentId) {
 async function downVoteComment(threadId, commentId) {
   const url = `${BASE_URL}/threads/${threadId}/comments/${commentId}/down-vote`;
   const options = {
-    method: "POST",
+    method: 'POST',
   };
   const response = await fetchWithToken(url, options);
   const responseData = await response.json();
@@ -218,7 +216,7 @@ async function downVoteComment(threadId, commentId) {
 async function neutralizeVoteComment(threadId, commentId) {
   const url = `${BASE_URL}/threads/${threadId}/comments/${commentId}/neutral-vote`;
   const options = {
-    method: "POST",
+    method: 'POST',
   };
   const response = await fetchWithToken(url, options);
   const responseData = await response.json();

@@ -1,0 +1,12 @@
+{
+  "extends": ["airbnb"],
+  "rules": {
+    "no-alert": "off",
+    "jsx-quotes": ["error", "prefer-single"],
+    "react/forbid-prop-types": "off",
+    "object-curly-newline": "off"
+  },
+  "env": {
+    "browser": true
+  }
+}

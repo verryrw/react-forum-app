@@ -1,4 +1,4 @@
-import { ActionType } from "./action";
+import { ActionType } from './action';
 
 function threadDetailReducer(threadDetail = null, action = {}) {
   switch (action.type) {
@@ -7,8 +7,8 @@ function threadDetailReducer(threadDetail = null, action = {}) {
     case ActionType.CLEAR_THREAD_DETAIL:
       return null;
     case ActionType.TOGGLE_THREAD_DETAIL_LIKE: {
-      const upVotesBy = threadDetail.upVotesBy;
-      const userId = action.payload.userId;
+      const { upVotesBy } = threadDetail;
+      const { userId } = action.payload;
       const isLiked = upVotesBy.includes(userId);
 
       return {
@@ -17,19 +17,19 @@ function threadDetailReducer(threadDetail = null, action = {}) {
           ? upVotesBy.filter((downVoteUserId) => downVoteUserId !== userId)
           : [...upVotesBy, userId],
         downVotesBy: threadDetail.downVotesBy.filter(
-          (downVoteUserId) => downVoteUserId !== userId
+          (downVoteUserId) => downVoteUserId !== userId,
         ),
       };
     }
     case ActionType.TOGGLE_THREAD_DETAIL_DISLIKE: {
-      const downVotesBy = threadDetail.downVotesBy;
-      const userId = action.payload.userId;
+      const { downVotesBy } = threadDetail;
+      const { userId } = action.payload;
       const isDisliked = downVotesBy.includes(userId);
 
       return {
         ...threadDetail,
         upVotesBy: threadDetail.upVotesBy.filter(
-          (upVoteUserId) => upVoteUserId !== userId
+          (upVoteUserId) => upVoteUserId !== userId,
         ),
         downVotesBy: isDisliked
           ? downVotesBy.filter((downVoteUserId) => downVoteUserId !== userId)
@@ -37,33 +37,37 @@ function threadDetailReducer(threadDetail = null, action = {}) {
       };
     }
     case ActionType.TOGGLE_THREAD_COMMENT_LIKE: {
-      const comments = threadDetail.comments;
+      const { comments } = threadDetail;
       const targetCommentId = action.payload.commentId;
-      const userId = action.payload.userId;
+      const { userId } = action.payload;
       const isCommentLiked = comments
         .find((comment) => comment.id === targetCommentId)
         .upVotesBy.includes(userId);
-      const commentsLiked = () =>
-        comments.map((comment) => {
-          if (comment.id === targetCommentId) {
-            return { ...comment, upVotesBy: [...comment.upVotesBy, userId] };
-          }
+      const commentsLiked = () => comments.map((comment) => {
+        if (comment.id === targetCommentId) {
+          return {
+            ...comment,
+            upVotesBy: [...comment.upVotesBy, userId],
+            downVotesBy: comment.downVotesBy.filter(
+              (downVoteUserId) => downVoteUserId !== userId,
+            ),
+          };
+        }
 
-          return comment;
-        });
-      const commentsNeutralized = () =>
-        comments.map((comment) => {
-          if (comment.id === targetCommentId) {
-            return {
-              ...comment,
-              upVotesBy: comment.upVotesBy.filter(
-                (upVoteUserId) => upVoteUserId !== userId
-              ),
-            };
-          }
+        return comment;
+      });
+      const commentsNeutralized = () => comments.map((comment) => {
+        if (comment.id === targetCommentId) {
+          return {
+            ...comment,
+            upVotesBy: comment.upVotesBy.filter(
+              (upVoteUserId) => upVoteUserId !== userId,
+            ),
+          };
+        }
 
-          return comment;
-        });
+        return comment;
+      });
 
       return {
         ...threadDetail,
@@ -71,36 +75,37 @@ function threadDetailReducer(threadDetail = null, action = {}) {
       };
     }
     case ActionType.TOGGLE_THREAD_COMMENT_DISLIKE: {
-      const comments = threadDetail.comments;
+      const { comments } = threadDetail;
       const targetCommentId = action.payload.commentId;
-      const userId = action.payload.userId;
+      const { userId } = action.payload;
       const isCommentDisliked = comments
         .find((comment) => comment.id === targetCommentId)
         .downVotesBy.includes(userId);
-      const commentsDisliked = () =>
-        comments.map((comment) => {
-          if (comment.id === targetCommentId) {
-            return {
-              ...comment,
-              downVotesBy: [...comment.downVotesBy, userId],
-            };
-          }
+      const commentsDisliked = () => comments.map((comment) => {
+        if (comment.id === targetCommentId) {
+          return {
+            ...comment,
+            upVotesBy: comment.upVotesBy.filter(
+              (upVoteUserId) => upVoteUserId !== userId,
+            ),
+            downVotesBy: [...comment.downVotesBy, userId],
+          };
+        }
 
-          return comment;
-        });
-      const commentsNeutralized = () =>
-        comments.map((comment) => {
-          if (comment.id === targetCommentId) {
-            return {
-              ...comment,
-              downVotesBy: comment.downVotesBy.filter(
-                (upVoteUserId) => upVoteUserId !== userId
-              ),
-            };
-          }
+        return comment;
+      });
+      const commentsNeutralized = () => comments.map((comment) => {
+        if (comment.id === targetCommentId) {
+          return {
+            ...comment,
+            downVotesBy: comment.downVotesBy.filter(
+              (upVoteUserId) => upVoteUserId !== userId,
+            ),
+          };
+        }
 
-          return comment;
-        });
+        return comment;
+      });
 
       return {
         ...threadDetail,

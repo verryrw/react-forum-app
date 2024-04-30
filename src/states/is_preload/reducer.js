@@ -1,4 +1,4 @@
-import { ActionType } from "./action";
+import { ActionType } from './action';
 
 function isPreloadReducer(isPreload = true, action = {}) {
   switch (action.type) {
@@ -9,4 +9,4 @@ function isPreloadReducer(isPreload = true, action = {}) {
   }
 }
 
-export { isPreloadReducer };
+export default isPreloadReducer;

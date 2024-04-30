@@ -1,13 +1,13 @@
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState } from "react";
-import { IoMdAdd } from "react-icons/io";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { IoMdAdd } from 'react-icons/io';
 
-import ThreadItem from "../components/ThreadItem";
-import { asyncPopulateUsersAndThreads } from "../states/shared/action";
-import BadgeButton from "../components/BadgeButton";
+import ThreadItem from '../components/ThreadItem';
+import asyncPopulateUsersAndThreads from '../states/shared/action';
+import BadgeButton from '../components/BadgeButton';
 
-export default function ThreadsPage() {
+function ThreadsPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -25,47 +25,43 @@ export default function ThreadsPage() {
   threads.forEach((thread) => categories.add(thread.category));
 
   const threadList = threads
-    .filter((thread) =>
-      selectedCategories.length > 0
-        ? selectedCategories.includes(thread.category)
-        : true
-    )
+    .filter((thread) => (selectedCategories.length > 0
+      ? selectedCategories.includes(thread.category)
+      : true))
     .map((thread) => ({
       ...thread,
-      name: users.find((user) => user.id == thread.ownerId).name,
+      name: users.find((user) => user.id === thread.ownerId).name,
     }));
 
   return (
-    <div className="p-4">
+    <div className='p-4'>
       <section>
         <h1>Kategori Populer</h1>
-        {Array.from(categories).map((category) =>
-          selectedCategories.includes(category) ? (
-            <BadgeButton
-              key={category}
-              onClickHandler={() => {
-                setSelectedCategories((prevState) =>
-                  prevState.filter((state) => state !== category)
-                );
-              }}>
-              {category}
-            </BadgeButton>
-          ) : (
-            <BadgeButton
-              variant="outline"
-              key={category}
-              onClickHandler={() => {
-                setSelectedCategories((prevState) => [...prevState, category]);
-                console.log("tambahin ", category);
-              }}>
-              {category}
-            </BadgeButton>
-          )
-        )}
+        {Array.from(categories).map((category) => (selectedCategories.includes(category) ? (
+          <BadgeButton
+            variant='filled'
+            key={category}
+            onClickHandler={() => {
+              setSelectedCategories((prevState) => prevState.filter((state) => state !== category));
+            }}
+          >
+            {category}
+          </BadgeButton>
+        ) : (
+          <BadgeButton
+            variant='outline'
+            key={category}
+            onClickHandler={() => {
+              setSelectedCategories((prevState) => [...prevState, category]);
+            }}
+          >
+            {category}
+          </BadgeButton>
+        )))}
       </section>
-      <div className="my-4" />
-      <section className="mb-24">
-        <h1 className="mb-1 text-xl font-bold">Diskusi tersedia</h1>
+      <div className='my-4' />
+      <section className='mb-24'>
+        <h1 className='mb-1 text-xl font-bold'>Diskusi tersedia</h1>
         {threadList.map((thread) => (
           <ThreadItem
             key={thread.id}
@@ -77,10 +73,13 @@ export default function ThreadsPage() {
       {authUser && (
         <section>
           <button
-            className="rounded-md absolute right-4 bottom-4 bg-orange-500 hover:bg-orange-600 p-2 text-3xl font-bold drop-shadow-lg"
+            type='button'
+            aria-label='button-add'
+            className='rounded-md absolute right-4 bottom-4 bg-orange-500 hover:bg-orange-600 p-2 text-3xl font-bold drop-shadow-lg'
             onClick={() => {
-              navigate("/threads/add");
-            }}>
+              navigate('/threads/add');
+            }}
+          >
             <IoMdAdd />
           </button>
         </section>
@@ -88,3 +87,5 @@ export default function ThreadsPage() {
     </div>
   );
 }
+
+export default ThreadsPage;

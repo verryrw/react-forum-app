@@ -1,4 +1,4 @@
-import { ActionType } from "./action";
+import { ActionType } from './action';
 
 function threadsReducer(threads = [], action = {}) {
   switch (action.type) {
@@ -13,11 +13,11 @@ function threadsReducer(threads = [], action = {}) {
             ...thread,
             upVotesBy: thread.upVotesBy.includes(action.payload.userId)
               ? thread.upVotesBy.filter(
-                  (upVoteUserId) => upVoteUserId !== action.payload.userId
-                )
+                (upVoteUserId) => upVoteUserId !== action.payload.userId,
+              )
               : [...thread.upVotesBy, action.payload.userId],
             downVotesBy: thread.downVotesBy.filter(
-              (downVoteUserId) => downVoteUserId !== action.payload.userId
+              (downVoteUserId) => downVoteUserId !== action.payload.userId,
             ),
           };
         }
@@ -30,12 +30,12 @@ function threadsReducer(threads = [], action = {}) {
           return {
             ...thread,
             upVotesBy: thread.upVotesBy.filter(
-              (upVoteUserId) => upVoteUserId !== action.payload.userId
+              (upVoteUserId) => upVoteUserId !== action.payload.userId,
             ),
             downVotesBy: thread.downVotesBy.includes(action.payload.userId)
               ? thread.downVotesBy.filter(
-                  (downVoteUserId) => downVoteUserId !== action.payload.userId
-                )
+                (downVoteUserId) => downVoteUserId !== action.payload.userId,
+              )
               : [...thread.downVotesBy, action.payload.userId],
           };
         }

@@ -1,5 +1,5 @@
-import TimeAgo from "javascript-time-ago";
-import id from "javascript-time-ago/locale/id";
+import TimeAgo from 'javascript-time-ago';
+import id from 'javascript-time-ago/locale/id';
 
 TimeAgo.addDefaultLocale(id);
 
@@ -8,4 +8,4 @@ function convertDateToTimeago(date) {
   return timeAgo.format(date);
 }
 
-export { convertDateToTimeago };
+export default convertDateToTimeago;

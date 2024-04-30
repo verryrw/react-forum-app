@@ -1,15 +1,15 @@
-import { hideLoading, showLoading } from "react-redux-loading-bar";
-import { getLeaderboards } from "../../utils/network-api";
+import { hideLoading, showLoading } from 'react-redux-loading-bar';
+import { getLeaderboards } from '../../utils/network-api';
 
 const ActionType = {
-  RECEIVE_LEADERBOARDS: "RECEIVE_LEADERBOARDS",
+  RECEIVE_LEADERBOARDS: 'RECEIVE_LEADERBOARDS',
 };
 
 function receiveLeaderboardsActionCreator(leaderboards) {
   return {
     type: ActionType.RECEIVE_LEADERBOARDS,
     payload: {
-      leaderboards: leaderboards,
+      leaderboards,
     },
   };
 }

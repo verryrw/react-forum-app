@@ -1,4 +1,4 @@
-import { ActionType } from "./action";
+import { ActionType } from './action';
 
 function authUserReducer(authUser = null, action = {}) {
   switch (action.type) {
@@ -11,4 +11,4 @@ function authUserReducer(authUser = null, action = {}) {
   }
 }
 
-export { authUserReducer };
+export default authUserReducer;

@@ -1,9 +1,11 @@
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 
-import TextInput from "../components/TextInput";
-import useInput from "../hooks/useInput";
-import { asyncRegister } from "../states/users/action";
+import TextInput from '../components/TextInput';
+import useInput from '../hooks/useInput';
+import { asyncRegister } from '../states/users/action';
+
 export default function RegisterPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -22,36 +24,41 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">Daftar</h1>
+    <div className='p-4'>
+      <h1 className='text-xl font-bold mb-4'>Daftar</h1>
       <form onSubmit={onSubmitHandler}>
         <TextInput
-          placeholder="Nama"
+          placeholder='Nama'
+          type='text'
           value={name}
           onChangeHandler={nameChangeHandler}
         />
         <TextInput
-          placeholder="Email"
-          type="email"
+          placeholder='Email'
+          type='email'
           value={email}
           onChangeHandler={emailChangeHandler}
         />
         <TextInput
-          placeholder="Password"
-          type="password"
+          placeholder='Password'
+          type='password'
           value={password}
           onChangeHandler={passwordChangeHandler}
         />
         <button
-          type="submit"
-          className="w-full border border-[#fd7014] p-2 mt-2 rounded-md">
+          type='submit'
+          className='w-full border border-[#fd7014] p-2 mt-2 rounded-md'
+        >
           Daftar
         </button>
       </form>
-      <div className="flex justify-center">
+      <div className='flex justify-center'>
         <button
-          className="mt-3 underline text-[#fd7014] font-bold"
-          onClick={onNavigateBack}>
+          type='button'
+          aria-label='button-back'
+          className='mt-3 underline text-[#fd7014] font-bold'
+          onClick={onNavigateBack}
+        >
           Kembali
         </button>
       </div>

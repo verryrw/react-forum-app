@@ -1,10 +1,11 @@
-import { PiChatsCircleDuotone } from "react-icons/pi";
-import { MdOutlineLeaderboard } from "react-icons/md";
-import { IoMdLogIn, IoMdLogOut } from "react-icons/io";
-import { NavLink } from "react-router-dom";
-import PropTypes from "prop-types";
-import { useDispatch, useSelector } from "react-redux";
-import { asyncUnsetAuthUser } from "../states/auth_user/action";
+import React from 'react';
+import { NavLink } from 'react-router-dom';
+
+import { useDispatch, useSelector } from 'react-redux';
+import { PiChatsCircleDuotone } from 'react-icons/pi';
+import { MdOutlineLeaderboard } from 'react-icons/md';
+import { IoMdLogIn, IoMdLogOut } from 'react-icons/io';
+import { asyncUnsetAuthUser } from '../states/auth_user/action';
 
 export default function Footer() {
   const { authUser } = useSelector((states) => states);
@@ -16,26 +17,26 @@ export default function Footer() {
 
   return (
     <footer>
-      <div className="flex justify-center w-full bg-zinc-900">
+      <div className='flex justify-center w-full bg-zinc-900'>
         <nav>
-          <div className="flex flex-row gap-8">
-            <NavLink to={"/"}>
-              <div className="flex flex-col items-center p-2 hover:bg-black">
+          <div className='flex flex-row gap-8'>
+            <NavLink to='/'>
+              <div className='flex flex-col items-center p-2 hover:bg-black'>
                 <PiChatsCircleDuotone />
                 <p>Threads</p>
               </div>
             </NavLink>
 
-            <NavLink to={"/leaderboards"}>
-              <div className="flex flex-col items-center p-2 hover:bg-black">
+            <NavLink to='/leaderboards'>
+              <div className='flex flex-col items-center p-2 hover:bg-black'>
                 <MdOutlineLeaderboard />
                 <p>Leaderboards</p>
               </div>
             </NavLink>
 
             {!authUser && (
-              <NavLink to={"/login"}>
-                <div className="flex flex-col items-center p-2 hover:bg-black">
+              <NavLink to='/login'>
+                <div className='flex flex-col items-center p-2 hover:bg-black'>
                   <IoMdLogIn />
                   <p>Login</p>
                 </div>
@@ -44,8 +45,11 @@ export default function Footer() {
 
             {authUser && (
               <button
-                className="flex flex-col items-center p-2 hover:bg-black"
-                onClick={logoutHandler}>
+                type='button'
+                aria-label='button-logout'
+                className='flex flex-col items-center p-2 hover:bg-black'
+                onClick={logoutHandler}
+              >
                 <IoMdLogOut />
                 <p>Logout</p>
               </button>
@@ -56,8 +60,3 @@ export default function Footer() {
     </footer>
   );
 }
-
-Footer.propTypes = {
-  loggedInUser: PropTypes.object,
-  logoutHandler: PropTypes.func,
-};
