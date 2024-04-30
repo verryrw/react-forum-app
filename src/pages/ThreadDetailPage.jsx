@@ -1,153 +1,59 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import PropTypes from "prop-types";
 
 import Badge from "../components/Badge";
 import ButtonBack from "../components/ButtonBack";
-import {
-  addThreadComment,
-  downVoteThread,
-  getThread,
-  neutralizeVoteThread,
-  upVoteThread,
-} from "../utils/network-api";
 import { BiDislike, BiLike, BiSolidDislike, BiSolidLike } from "react-icons/bi";
 import { convertDateToTimeago } from "../utils";
 import CommentItem from "../components/CommentItem";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  asyncAddThreadDetailComment,
+  asyncReceiveThreadDetail,
+  asyncToggleThreadDetailDislike,
+  asyncToggleThreadDetailLike,
+  clearThreadDetailActionCreator,
+} from "../states/thread_detail/action";
 
-export default function ThreadDetailPage({ loggedInUser }) {
+export default function ThreadDetailPage() {
   const params = useParams();
   const threadId = params.threadId;
   const navigate = useNavigate();
-  const [thread, setThread] = useState();
-  const [isLoading, setIsLoading] = useState(true);
+  const dispatch = useDispatch();
+  const { authUser, threadDetail } = useSelector((states) => states);
   const [commentBody, setCommentBody] = useState("");
 
   useEffect(() => {
-    async function fetchThread() {
-      try {
-        const thread = await getThread(threadId);
-        setThread(thread);
-        setIsLoading(false);
-      } catch (err) {
-        alert(err.message);
-        navigate("/");
-      }
-    }
-
-    fetchThread();
-  }, [loggedInUser?.id, navigate, threadId]);
-
-  async function onNeutralizeHandler() {
-    const newUpVotesBy = thread.upVotesBy.filter(
-      (upVoteId) => upVoteId !== loggedInUser?.id
-    );
-    const newDownVotesBy = thread.downVotesBy.filter(
-      (downVoteId) => downVoteId !== loggedInUser?.id
-    );
-    const newThread = {
-      ...thread,
-      upVotesBy: newUpVotesBy,
-      downVotesBy: newDownVotesBy,
-    };
-
-    setThread(newThread);
-
-    const response = await neutralizeVoteThread(thread.id);
-    if (response.error) {
-      alert("gagal neutralize: " + response.message);
-    } else {
-      console.log("berhasil neutralize");
-    }
-  }
-
-  async function onLikeHandler() {
-    if (!loggedInUser) {
-      alert("Please login first");
-      return;
-    }
-
-    setThread({
-      ...thread,
-      upVotesBy: [...thread.upVotesBy, loggedInUser?.id],
-      downVotesBy: thread.downVotesBy.filter(
-        (downVoteUserId) => downVoteUserId !== loggedInUser?.id
-      ),
-    });
-
-    const response = await upVoteThread(thread.id);
-    if (response.error) {
-      alert("gagal like: " + response.message);
-      setThread({
-        ...thread,
-        upVotesBy: thread.upVotesBy.filter(
-          (upVoteUserId) => upVoteUserId !== loggedInUser?.id
-        ),
-        downVotesBy: thread.downVotesBy.filter(
-          (downVoteUserId) => downVoteUserId !== loggedInUser?.id
-        ),
-      });
-    } else {
-      console.log("berhasil like");
-    }
-  }
-
-  async function onDislikeHandler() {
-    if (!loggedInUser) {
-      alert("Please login first");
-      return;
-    }
-
-    setThread({
-      ...thread,
-      upVotesBy: thread.upVotesBy.filter(
-        (upVoteUserId) => upVoteUserId !== loggedInUser?.id
-      ),
-      downVotesBy: [...thread.downVotesBy, loggedInUser?.id],
-    });
-
-    const response = await downVoteThread(thread.id);
-
-    if (response.error) {
-      alert("gagal dislike: " + response.message);
-      setThread({
-        ...thread,
-        upVotesBy: thread.upVotesBy.filter(
-          (upVoteUserId) => upVoteUserId !== loggedInUser?.id
-        ),
-        downVotesBy: thread.downVotesBy.filter(
-          (downVoteUserId) => downVoteUserId !== loggedInUser?.id
-        ),
-      });
-    } else {
-      console.log("berhasil dislike");
-    }
-  }
-
-  async function onAddCommentHandler(event) {
-    event.preventDefault();
-    const response = await addThreadComment(threadId, commentBody);
-    if (response.error) {
-      alert(response.message);
-    } else {
-      console.log("berhasil nambah comment");
-    }
-  }
+    dispatch(clearThreadDetailActionCreator());
+    dispatch(asyncReceiveThreadDetail(threadId));
+  }, [dispatch, threadId]);
 
   function onBackHandler() {
     navigate("/", { replace: true });
   }
 
-  if (isLoading) {
-    return <h1 className="mt-8 text-center">Loading...</h1>;
+  function onThreadLikeHandler() {
+    dispatch(asyncToggleThreadDetailLike(threadId));
+  }
+
+  function onThreadDislikeHandler() {
+    dispatch(asyncToggleThreadDetailDislike(threadId));
+  }
+
+  function onCommentAddHandler() {
+    dispatch(asyncAddThreadDetailComment(threadId, commentBody));
   }
 
   function isLikedByMe() {
-    return thread.upVotesBy.includes(loggedInUser?.id);
+    return threadDetail.upVotesBy.includes(authUser?.id);
   }
 
   function isDislikedByMe() {
-    return thread.downVotesBy.includes(loggedInUser?.id);
+    return threadDetail.downVotesBy.includes(authUser?.id);
+  }
+
+  if (threadDetail === null) {
+    return null;
   }
 
   return (
@@ -156,11 +62,11 @@ export default function ThreadDetailPage({ loggedInUser }) {
         <ButtonBack onBackHandler={onBackHandler} />
       </h4>
       <section>
-        <Badge variant="outline">#{thread.category}</Badge>
-        <h1 className="mt-2 text-3xl font-semibold">{thread.title}</h1>
+        <Badge variant="outline">#{threadDetail.category}</Badge>
+        <h1 className="mt-2 text-3xl font-semibold">{threadDetail.title}</h1>
         <h2
           className="mt-2 text-md text-zinc-300"
-          dangerouslySetInnerHTML={{ __html: thread.body }}
+          dangerouslySetInnerHTML={{ __html: threadDetail.body }}
         />
       </section>
       <section>
@@ -168,33 +74,31 @@ export default function ThreadDetailPage({ loggedInUser }) {
           <div className="flex gap-2">
             <button
               className="flex items-center"
-              onClick={isLikedByMe() ? onNeutralizeHandler : onLikeHandler}>
+              onClick={onThreadLikeHandler}>
               {isLikedByMe() ? <BiSolidLike /> : <BiLike />}
-              <span className="ms-1">{thread.upVotesBy.length}</span>
+              <span className="ms-1">{threadDetail.upVotesBy.length}</span>
             </button>
             <button
               className="flex items-center"
-              onClick={
-                isDislikedByMe() ? onNeutralizeHandler : onDislikeHandler
-              }>
+              onClick={onThreadDislikeHandler}>
               {isDislikedByMe() ? <BiSolidDislike /> : <BiDislike />}
-              <span className="ms-1">{thread.downVotesBy.length}</span>
+              <span className="ms-1">{threadDetail.downVotesBy.length}</span>
             </button>
           </div>
           <span className="flex">
             Dibuat oleh{" "}
             <img
-              src={thread.owner.avatar}
+              src={threadDetail.owner.avatar}
               className="mx-1 h-5 w-5 rounded-full"
             />
-            <b>{thread.owner.name}</b>
+            <b>{threadDetail.owner.name}</b>
           </span>
-          <span>{convertDateToTimeago(new Date(thread.createdAt))}</span>
+          <span>{convertDateToTimeago(new Date(threadDetail.createdAt))}</span>
         </div>
       </section>
       <section>
         <h1 className="mt-4 font-bold text-lg">Beri komentar</h1>
-        {!loggedInUser && (
+        {!authUser && (
           <p className="mt-1 text-zinc-300">
             <Link
               to="/login"
@@ -204,7 +108,7 @@ export default function ThreadDetailPage({ loggedInUser }) {
             untuk memberi komentar
           </p>
         )}
-        {loggedInUser && (
+        {authUser && (
           <div>
             <div
               className="my-2 p-2 w-full rounded-md bg-[#393E46] min-h-32"
@@ -216,7 +120,7 @@ export default function ThreadDetailPage({ loggedInUser }) {
             <button
               type="submit"
               className="w-full bg-[#fd7014] p-2 rounded-md"
-              onClick={onAddCommentHandler}>
+              onClick={onCommentAddHandler}>
               Kirim
             </button>
           </div>
@@ -224,21 +128,17 @@ export default function ThreadDetailPage({ loggedInUser }) {
       </section>
       <section className="mb-24">
         <h1 className="mt-4 mb-2 font-bold text-lg">
-          Komentar ({thread.comments.length})
+          Komentar ({threadDetail.comments.length})
         </h1>
-        {thread.comments.map((comment) => (
+        {threadDetail.comments.map((comment) => (
           <CommentItem
             key={comment.id}
             comment={comment}
-            loggedInUser={loggedInUser}
-            threadId={thread.id}
+            loggedInUser={authUser}
+            threadId={threadDetail.id}
           />
         ))}
       </section>
     </div>
   );
 }
-
-ThreadDetailPage.propTypes = {
-  loggedInUser: PropTypes.object,
-};

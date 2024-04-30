@@ -1,10 +1,11 @@
-import { useNavigate } from "react-router-dom";
 import {
   addThread,
   downVoteThread,
   neutralizeVoteThread,
   upVoteThread,
 } from "../../utils/network-api";
+
+import { showLoading, hideLoading } from "react-redux-loading-bar";
 
 const ActionType = {
   RECEIVE_THREADS: "RECEIVE_THREADS",
@@ -53,22 +54,31 @@ function toggleThreadDislikeActionCreator(threadId, userId) {
 
 function asyncAddThread({ title, category, body }) {
   return async (dispatch) => {
+    dispatch(showLoading());
+
     try {
       const response = await addThread({ title, category, body });
       dispatch(addThreadActionCreator(response));
+      alert("Successfully added thread");
     } catch (e) {
       alert(e.message);
     }
+
+    dispatch(hideLoading());
   };
 }
 
 function asyncToggleThreadLike(threadId) {
   return async (dispatch, getState) => {
     const { authUser, threads } = getState();
-    dispatch(toggleThreadLikeActionCreator(threadId, authUser.id));
+    const thread = threads.find((thread) => thread.id === threadId);
+    const run = thread.upVotesBy.includes(authUser.id) ? 1 : 2;
+
+    dispatch(showLoading());
+
     try {
-      const thread = threads.find((thread) => thread.id === threadId);
-      if (thread.upVotesBy.includes(authUser.id)) {
+      dispatch(toggleThreadLikeActionCreator(threadId, authUser.id));
+      if (run === 1) {
         await neutralizeVoteThread(threadId);
       } else {
         await upVoteThread(threadId);
@@ -77,13 +87,18 @@ function asyncToggleThreadLike(threadId) {
       dispatch(toggleThreadLikeActionCreator(threadId, authUser.id));
       alert(e.message);
     }
+
+    dispatch(hideLoading());
   };
 }
 
 function asyncToggleThreadDislike(threadId) {
   return async (dispatch, getState) => {
     const { authUser, threads } = getState();
+
     dispatch(toggleThreadDislikeActionCreator(threadId, authUser.id));
+    dispatch(showLoading());
+
     try {
       const thread = threads.find((thread) => thread.id === threadId);
       if (thread.downVotesBy.includes(authUser.id)) {
@@ -95,6 +110,8 @@ function asyncToggleThreadDislike(threadId) {
       dispatch(toggleThreadDislikeActionCreator(threadId, authUser.id));
       alert(e.message);
     }
+
+    dispatch(hideLoading());
   };
 }
 

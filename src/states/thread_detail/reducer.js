@@ -6,7 +6,7 @@ function threadDetailReducer(threadDetail = null, action = {}) {
       return action.payload.threadDetail;
     case ActionType.CLEAR_THREAD_DETAIL:
       return null;
-    case ActionType.TOGGLE_THREAD_LIKE: {
+    case ActionType.TOGGLE_THREAD_DETAIL_LIKE: {
       const upVotesBy = threadDetail.upVotesBy;
       const userId = action.payload.userId;
       const isLiked = upVotesBy.includes(userId);
@@ -16,15 +16,21 @@ function threadDetailReducer(threadDetail = null, action = {}) {
         upVotesBy: isLiked
           ? upVotesBy.filter((downVoteUserId) => downVoteUserId !== userId)
           : [...upVotesBy, userId],
+        downVotesBy: threadDetail.downVotesBy.filter(
+          (downVoteUserId) => downVoteUserId !== userId
+        ),
       };
     }
-    case ActionType.TOGGLE_THREAD_DISLIKE: {
+    case ActionType.TOGGLE_THREAD_DETAIL_DISLIKE: {
       const downVotesBy = threadDetail.downVotesBy;
       const userId = action.payload.userId;
       const isDisliked = downVotesBy.includes(userId);
 
       return {
         ...threadDetail,
+        upVotesBy: threadDetail.upVotesBy.filter(
+          (upVoteUserId) => upVoteUserId !== userId
+        ),
         downVotesBy: isDisliked
           ? downVotesBy.filter((downVoteUserId) => downVoteUserId !== userId)
           : [...downVotesBy, userId],

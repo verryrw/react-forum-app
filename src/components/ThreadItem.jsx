@@ -1,96 +1,32 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
 import PropTypes from "prop-types";
-
-// eslint-disable-next-line no-unused-vars
 import { BiLike, BiDislike, BiSolidLike, BiSolidDislike } from "react-icons/bi";
 import { BsReply } from "react-icons/bs";
+
 import { convertDateToTimeago } from "../utils";
 import Badge from "./Badge";
+import { useDispatch, useSelector } from "react-redux";
 import {
-  downVoteThread,
-  neutralizeVoteThread,
-  upVoteThread,
-} from "../utils/network-api";
+  asyncToggleThreadDislike,
+  asyncToggleThreadLike,
+} from "../states/threads/action";
 
-export default function ThreadItem({ thread, loggedInUser }) {
+export default function ThreadItem({ thread }) {
+  const dispatch = useDispatch();
+  const { authUser } = useSelector((states) => states);
   const isLikedByMe = thread.upVotesBy.find(
-    (upVoteId) => upVoteId === loggedInUser?.id
+    (upVoteId) => upVoteId === authUser?.id
   );
   const isDislikedByMe = thread.downVotesBy.find(
-    (downVoteId) => downVoteId === loggedInUser?.id
+    (downVoteId) => downVoteId === authUser?.id
   );
-  const [isLike, setIsLike] = useState(isLikedByMe);
-  const [isDislike, setIsDislike] = useState(isDislikedByMe);
-  const [upVotesBy, setUpVotesBy] = useState(thread.upVotesBy);
-  const [downVotesBy, setDownVotesBy] = useState(thread.downVotesBy);
 
-  function pushIfNotExists(array, item) {
-    const newArray = array;
-    if (newArray.indexOf(item) === -1) {
-      newArray.push(item);
-    }
-    return newArray;
+  function onLikeHandler() {
+    dispatch(asyncToggleThreadLike(thread.id));
   }
 
-  function resetLikeAndDislike() {
-    setIsLike(false);
-    setIsDislike(false);
-    setUpVotesBy(
-      thread.upVotesBy.filter((upVoteId) => upVoteId !== loggedInUser?.id)
-    );
-    setDownVotesBy(
-      thread.downVotesBy.filter((downVoteId) => downVoteId !== loggedInUser?.id)
-    );
-  }
-
-  async function onNeutralizeHandler() {
-    resetLikeAndDislike();
-
-    const response = await neutralizeVoteThread(thread.id);
-    if (response.error) {
-      alert("gagal neutralize: " + response.message);
-    } else {
-      console.log("berhasil neutralize");
-    }
-  }
-
-  async function onLikeHandler() {
-    if (!loggedInUser) {
-      alert("Please login first");
-      return;
-    }
-    resetLikeAndDislike();
-    setIsLike(true);
-    setUpVotesBy(pushIfNotExists(thread.upVotesBy, loggedInUser?.id));
-
-    const response = await upVoteThread(thread.id);
-    if (response.error) {
-      alert("gagal like: " + response.message);
-      setIsLike(false);
-      setUpVotesBy(thread.upVotesBy.length);
-    } else {
-      console.log("berhasil like");
-    }
-  }
-
-  async function onDislikeHandler() {
-    if (!loggedInUser) {
-      alert("Please login first");
-      return;
-    }
-    resetLikeAndDislike();
-    setIsDislike(true);
-    setDownVotesBy(pushIfNotExists(thread.downVotesBy, loggedInUser?.id));
-
-    const response = await downVoteThread(thread.id);
-    if (response.error) {
-      alert("gagal dislike: " + response.message);
-      setIsDislike(false);
-      setDownVotesBy(thread.downVoteThreads);
-    } else {
-      console.log("berhasil dislike");
-    }
+  function onDislikeHandler() {
+    dispatch(asyncToggleThreadDislike(thread.id));
   }
 
   return (
@@ -111,15 +47,15 @@ export default function ThreadItem({ thread, loggedInUser }) {
         <div className="flex gap-2">
           <button
             className="flex items-center"
-            onClick={isLike ? onNeutralizeHandler : onLikeHandler}>
-            {isLike ? <BiSolidLike /> : <BiLike />}
-            <span className="ms-1">{upVotesBy.length}</span>
+            onClick={onLikeHandler}>
+            {isLikedByMe ? <BiSolidLike /> : <BiLike />}
+            <span className="ms-1">{thread.upVotesBy.length}</span>
           </button>
           <button
             className="flex items-center"
-            onClick={isDislike ? onNeutralizeHandler : onDislikeHandler}>
-            {isDislike ? <BiSolidDislike /> : <BiDislike />}
-            <span className="ms-1">{downVotesBy.length}</span>
+            onClick={onDislikeHandler}>
+            {isDislikedByMe ? <BiSolidDislike /> : <BiDislike />}
+            <span className="ms-1">{thread.downVotesBy.length}</span>
           </button>
           <span className="flex items-center">
             <BsReply />
@@ -136,6 +72,5 @@ export default function ThreadItem({ thread, loggedInUser }) {
 }
 
 ThreadItem.propTypes = {
-  thread: PropTypes.object,
-  loggedInUser: PropTypes.object,
+  thread: PropTypes.object.isRequired,
 };

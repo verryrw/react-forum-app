@@ -1,3 +1,4 @@
+import { hideLoading, showLoading } from "react-redux-loading-bar";
 import { register } from "../../utils/network-api";
 import { asyncSetAuthUser } from "../auth_user/action";
 
@@ -16,12 +17,16 @@ function receiveUsersActionCreator(users) {
 
 function asyncRegister({ name, email, password }) {
   return async (dispatch) => {
+    dispatch(showLoading());
+
     try {
       await register({ name, email, password });
       dispatch(asyncSetAuthUser(email, password));
     } catch (e) {
       alert(e.message);
     }
+
+    dispatch(hideLoading());
   };
 }
 

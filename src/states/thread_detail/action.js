@@ -1,14 +1,17 @@
+import { hideLoading, showLoading } from "react-redux-loading-bar";
 import {
   addThreadComment,
+  downVoteThread,
   getThread,
+  neutralizeVoteThread,
   upVoteThread,
 } from "../../utils/network-api";
 
 const ActionType = {
   RECEIVE_THREAD_DETAIL: "RECEIVE_THREAD_DETAIL",
   CLEAR_THREAD_DETAIL: "CLEAR_THREAD_DETAIL",
-  TOGGLE_THREAD_LIKE: "TOGGLE_THREAD_LIKE",
-  TOGGLE_THREAD_DISLIKE: "TOGGLE_THREAD_DISLIKE",
+  TOGGLE_THREAD_DETAIL_LIKE: "TOGGLE_THREAD_DETAIL_LIKE",
+  TOGGLE_THREAD_DETAIL_DISLIKE: "TOGGLE_THREAD_DETAIL_DISLIKE",
   ADD_THREAD_COMMENT: "ADD_THREAD_COMMENT",
   TOGGLE_THREAD_COMMENT_LIKE: "TOGGLE_THREAD_COMMENT_LIKE",
   TOGGLE_THREAD_COMMENT_DISLIKE: "TOGGLE_THREAD_COMMENT_DISLIKE",
@@ -41,21 +44,19 @@ function addThreadDetailCommentActionCreator(comment) {
   };
 }
 
-function toggleThreadDetailLikeActionCreator(threadId, userId) {
+function toggleThreadDetailLikeActionCreator(userId) {
   return {
-    type: ActionType,
+    type: ActionType.TOGGLE_THREAD_DETAIL_LIKE,
     payload: {
-      threadId: threadId,
       userId: userId,
     },
   };
 }
 
-function toggleThreadDetailDislikeActionCreator(threadId, userId) {
+function toggleThreadDetailDislikeActionCreator(userId) {
   return {
-    type: ActionType,
+    type: ActionType.TOGGLE_THREAD_DETAIL_DISLIKE,
     payload: {
-      threadId: threadId,
       userId: userId,
     },
   };
@@ -93,53 +94,82 @@ function toggleThreadDetailCommentDislikeActionCreator({
 
 function asyncReceiveThreadDetail(threadId) {
   return async (dispatch) => {
+    dispatch(showLoading());
+
     try {
       const threadDetail = await getThread(threadId);
       dispatch(receiveThreadDetailActionCreator(threadDetail));
     } catch (err) {
       alert(err.message);
     }
+
+    dispatch(hideLoading());
   };
 }
 
 function asyncAddThreadDetailComment(threadId, commentBody) {
   return async (dispatch) => {
+    dispatch(showLoading());
+
     try {
       const comment = await addThreadComment(threadId, commentBody);
       dispatch(addThreadDetailCommentActionCreator(comment));
     } catch (e) {
       alert(e.message);
     }
+
+    dispatch(hideLoading());
   };
 }
 
 function asyncToggleThreadDetailLike(threadId) {
   return async (dispatch, getState) => {
-    const { authUser } = getState();
-    dispatch(toggleThreadDetailLikeActionCreator(threadId, authUser.id));
+    const { authUser, threadDetail } = getState();
+    const run = threadDetail.upVotesBy.includes(authUser.id) ? 0 : 1;
+
+    dispatch(showLoading());
+
     try {
-      await upVoteThread(threadId);
+      dispatch(toggleThreadDetailLikeActionCreator(authUser.id));
+      if (run === 0) {
+        await neutralizeVoteThread(threadId);
+      } else {
+        await upVoteThread(threadId);
+      }
     } catch (e) {
-      dispatch(toggleThreadDetailLikeActionCreator(threadId, authUser.id));
+      dispatch(toggleThreadDetailLikeActionCreator(authUser.id));
     }
+
+    dispatch(hideLoading());
   };
 }
 
 function asyncToggleThreadDetailDislike(threadId) {
   return async (dispatch, getState) => {
-    const { authUser } = getState();
-    dispatch(toggleThreadDetailDislikeActionCreator(threadId, authUser.id));
+    const { authUser, threadDetail } = getState();
+    const run = threadDetail.downVotesBy.includes(authUser.id) ? 1 : 2;
+
+    dispatch(showLoading());
+
     try {
-      await upVoteThread(threadId);
+      dispatch(toggleThreadDetailDislikeActionCreator(authUser.id));
+      if (run === 1) {
+        await neutralizeVoteThread(threadId);
+      } else {
+        await downVoteThread(threadId);
+      }
     } catch (e) {
-      dispatch(toggleThreadDetailDislikeActionCreator(threadId, authUser.id));
+      dispatch(toggleThreadDetailDislikeActionCreator(authUser.id));
     }
+
+    dispatch(hideLoading());
   };
 }
 
 function asyncToggleThreadDetailCommentLike(threadId, commentId) {
   return async (dispatch, getState) => {
     const { authUser } = getState();
+
     dispatch(
       toggleThreadDetailCommentLikeActionCreator({
         threadId: threadId,
@@ -147,6 +177,8 @@ function asyncToggleThreadDetailCommentLike(threadId, commentId) {
         userId: authUser.id,
       })
     );
+    dispatch(showLoading());
+
     try {
       await upVoteThread(threadId);
     } catch (e) {
@@ -158,12 +190,15 @@ function asyncToggleThreadDetailCommentLike(threadId, commentId) {
         })
       );
     }
+
+    dispatch(hideLoading());
   };
 }
 
 function asyncToggleThreadDetailCommentDislike(threadId, commentId) {
   return async (dispatch, getState) => {
     const { authUser } = getState();
+
     dispatch(
       toggleThreadDetailCommentDislikeActionCreator({
         threadId: threadId,
@@ -171,6 +206,8 @@ function asyncToggleThreadDetailCommentDislike(threadId, commentId) {
         userId: authUser.id,
       })
     );
+    dispatch(showLoading());
+
     try {
       await upVoteThread(threadId);
     } catch (e) {
@@ -182,6 +219,8 @@ function asyncToggleThreadDetailCommentDislike(threadId, commentId) {
         })
       );
     }
+
+    dispatch(hideLoading());
   };
 }
 

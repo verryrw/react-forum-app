@@ -1,3 +1,4 @@
+import { hideLoading, showLoading } from "react-redux-loading-bar";
 import { putAccessToken } from "../../utils/local-api";
 import { getUserLogged, login } from "../../utils/network-api";
 
@@ -26,6 +27,8 @@ function unsetAuthUserActionCreator() {
 
 function asyncSetAuthUser(email, password) {
   return async (dispatch) => {
+    dispatch(showLoading());
+
     try {
       const token = await login(email, password);
       putAccessToken(token);
@@ -34,13 +37,17 @@ function asyncSetAuthUser(email, password) {
     } catch (e) {
       alert(e.message);
     }
+
+    dispatch(hideLoading());
   };
 }
 
 function asyncUnsetAuthUser() {
   return (dispatch) => {
+    dispatch(showLoading());
     dispatch(unsetAuthUserActionCreator());
     putAccessToken("");
+    dispatch(hideLoading());
   };
 }
 

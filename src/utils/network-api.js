@@ -142,11 +142,12 @@ async function addThreadComment(threadId, content) {
   };
   const response = await fetchWithToken(url, options);
   const responseData = await response.json();
+  console.log(responseData);
   if (!response.ok) {
     throw new Error(responseData.message);
   }
-
-  return { error: false, data: response.data.comment };
+  console.log("sukses");
+  return responseData.data.comment;
 }
 
 async function upVoteThread(threadId) {
@@ -159,7 +160,7 @@ async function upVoteThread(threadId) {
   if (!response.ok) {
     throw new Error(responseData.message);
   }
-  return { error: false, data: responseData.data };
+  return responseData.data;
 }
 
 async function downVoteThread(threadId) {
@@ -172,7 +173,7 @@ async function downVoteThread(threadId) {
   if (!response.ok) {
     throw new Error(responseData.message);
   }
-  return { error: false, data: responseData.data };
+  return responseData.data;
 }
 
 async function neutralizeVoteThread(threadId) {
@@ -185,7 +186,7 @@ async function neutralizeVoteThread(threadId) {
   if (!response.ok) {
     throw new Error(responseData.message);
   }
-  return { error: false, data: responseData.data };
+  return responseData.data;
 }
 
 async function upVoteComment(threadId, commentId) {
@@ -198,7 +199,7 @@ async function upVoteComment(threadId, commentId) {
   if (!response.ok) {
     throw new Error(responseData.message);
   }
-  return { error: false, data: responseData.data };
+  return responseData.data;
 }
 
 async function downVoteComment(threadId, commentId) {
@@ -211,7 +212,7 @@ async function downVoteComment(threadId, commentId) {
   if (!response.ok) {
     throw new Error(responseData.message);
   }
-  return { error: false, data: responseData.data };
+  return responseData.data;
 }
 
 async function neutralizeVoteComment(threadId, commentId) {
@@ -224,7 +225,7 @@ async function neutralizeVoteComment(threadId, commentId) {
   if (!response.ok) {
     throw new Error(responseData.message);
   }
-  return { error: false, data: responseData.data };
+  return responseData.data;
 }
 
 export {
