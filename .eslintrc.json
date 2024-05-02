@@ -4,7 +4,8 @@
     "no-alert": "off",
     "jsx-quotes": ["error", "prefer-single"],
     "react/forbid-prop-types": "off",
-    "object-curly-newline": "off"
+    "object-curly-newline": "off",
+    "react/no-danger": "off"
   },
   "env": {
     "browser": true
