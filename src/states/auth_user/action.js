@@ -1,6 +1,6 @@
 import { hideLoading, showLoading } from 'react-redux-loading-bar';
 import { putAccessToken } from '../../utils/local-api';
-import { getUserLogged, login } from '../../utils/network-api';
+import api from '../../utils/network-api';
 
 const ActionType = {
   SET_AUTH_USER: 'SET_AUTH_USER',
@@ -30,9 +30,9 @@ function asyncSetAuthUser(email, password) {
     dispatch(showLoading());
 
     try {
-      const token = await login(email, password);
+      const token = await api.login(email, password);
       putAccessToken(token);
-      const authUser = await getUserLogged(token);
+      const authUser = await api.getUserLogged(token);
       dispatch(setAuthUserActionCreator(authUser));
     } catch (e) {
       alert(e.message);

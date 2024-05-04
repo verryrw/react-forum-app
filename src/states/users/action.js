@@ -1,5 +1,5 @@
 import { hideLoading, showLoading } from 'react-redux-loading-bar';
-import { register } from '../../utils/network-api';
+import api from '../../utils/network-api';
 import { asyncSetAuthUser } from '../auth_user/action';
 
 const ActionType = {
@@ -20,7 +20,7 @@ function asyncRegister({ name, email, password }) {
     dispatch(showLoading());
 
     try {
-      await register({ name, email, password });
+      await api.register({ name, email, password });
       dispatch(asyncSetAuthUser(email, password));
     } catch (e) {
       alert(e.message);

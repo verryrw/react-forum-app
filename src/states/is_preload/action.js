@@ -1,5 +1,5 @@
 import { hideLoading, showLoading } from 'react-redux-loading-bar';
-import { getUserLogged } from '../../utils/network-api';
+import api from '../../utils/network-api';
 import { setAuthUserActionCreator } from '../auth_user/action';
 
 const ActionType = {
@@ -21,7 +21,7 @@ function asyncSetIsPreload() {
 
     try {
       dispatch(setIsPreloadActionCreator(true));
-      const user = await getUserLogged();
+      const user = await api.getUserLogged();
       dispatch(setAuthUserActionCreator(user));
     } catch (e) {
       dispatch(setAuthUserActionCreator(null));

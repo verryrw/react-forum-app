@@ -1,10 +1,5 @@
 import { showLoading, hideLoading } from 'react-redux-loading-bar';
-import {
-  addThread,
-  downVoteThread,
-  neutralizeVoteThread,
-  upVoteThread,
-} from '../../utils/network-api';
+import api from '../../utils/network-api';
 
 const ActionType = {
   RECEIVE_THREADS: 'RECEIVE_THREADS',
@@ -56,7 +51,7 @@ function asyncAddThread({ title, category, body }) {
     dispatch(showLoading());
 
     try {
-      const response = await addThread({ title, category, body });
+      const response = await api.addThread({ title, category, body });
       dispatch(addThreadActionCreator(response));
       alert('Successfully added thread');
     } catch (e) {
@@ -81,9 +76,9 @@ function asyncToggleThreadLike(threadId) {
       try {
         dispatch(toggleThreadLikeActionCreator(threadId, authUser.id));
         if (run === 1) {
-          await neutralizeVoteThread(threadId);
+          await api.neutralizeVoteThread(threadId);
         } else {
-          await upVoteThread(threadId);
+          await api.upVoteThread(threadId);
         }
       } catch (e) {
         dispatch(toggleThreadLikeActionCreator(threadId, authUser.id));
@@ -107,9 +102,9 @@ function asyncToggleThreadDislike(threadId) {
       try {
         const thread = threads.find((threadItem) => threadItem.id === threadId);
         if (thread.downVotesBy.includes(authUser.id)) {
-          await neutralizeVoteThread(threadId);
+          await api.neutralizeVoteThread(threadId);
         } else {
-          await downVoteThread(threadId);
+          await api.downVoteThread(threadId);
         }
       } catch (e) {
         dispatch(toggleThreadDislikeActionCreator(threadId, authUser.id));

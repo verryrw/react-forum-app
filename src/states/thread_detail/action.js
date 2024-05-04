@@ -1,13 +1,5 @@
 import { hideLoading, showLoading } from 'react-redux-loading-bar';
-import {
-  addThreadComment,
-  downVoteComment,
-  downVoteThread,
-  getThread,
-  neutralizeVoteThread,
-  upVoteComment,
-  upVoteThread,
-} from '../../utils/network-api';
+import api from '../../utils/network-api';
 
 const ActionType = {
   RECEIVE_THREAD_DETAIL: 'RECEIVE_THREAD_DETAIL',
@@ -99,7 +91,7 @@ function asyncReceiveThreadDetail(threadId) {
     dispatch(showLoading());
 
     try {
-      const threadDetail = await getThread(threadId);
+      const threadDetail = await api.getThread(threadId);
       dispatch(receiveThreadDetailActionCreator(threadDetail));
     } catch (err) {
       alert(err.message);
@@ -114,7 +106,7 @@ function asyncAddThreadDetailComment(threadId, commentBody) {
     dispatch(showLoading());
 
     try {
-      const comment = await addThreadComment(threadId, commentBody);
+      const comment = await api.addThreadComment(threadId, commentBody);
       dispatch(addThreadDetailCommentActionCreator(comment));
     } catch (e) {
       alert(e.message);
@@ -136,9 +128,9 @@ function asyncToggleThreadDetailLike(threadId) {
       try {
         dispatch(toggleThreadDetailLikeActionCreator(authUser.id));
         if (run === 0) {
-          await neutralizeVoteThread(threadId);
+          await api.neutralizeVoteThread(threadId);
         } else {
-          await upVoteThread(threadId);
+          await api.upVoteThread(threadId);
         }
       } catch (e) {
         dispatch(toggleThreadDetailLikeActionCreator(authUser.id));
@@ -162,9 +154,9 @@ function asyncToggleThreadDetailDislike(threadId) {
       try {
         dispatch(toggleThreadDetailDislikeActionCreator(authUser.id));
         if (run === 1) {
-          await neutralizeVoteThread(threadId);
+          await api.neutralizeVoteThread(threadId);
         } else {
-          await downVoteThread(threadId);
+          await api.downVoteThread(threadId);
         }
       } catch (e) {
         dispatch(toggleThreadDetailDislikeActionCreator(authUser.id));
@@ -191,7 +183,7 @@ function asyncToggleThreadDetailCommentLike(threadId, commentId) {
       dispatch(showLoading());
 
       try {
-        await upVoteComment(threadId, commentId);
+        await api.upVoteComment(threadId, commentId);
       } catch (e) {
         dispatch(
           toggleThreadDetailCommentLikeActionCreator({
@@ -223,7 +215,7 @@ function asyncToggleThreadDetailCommentDislike(threadId, commentId) {
       dispatch(showLoading());
 
       try {
-        await downVoteComment(threadId, commentId);
+        await api.downVoteComment(threadId, commentId);
       } catch (e) {
         dispatch(
           toggleThreadDetailCommentDislikeActionCreator({

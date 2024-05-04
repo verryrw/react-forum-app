@@ -5,7 +5,8 @@
     "jsx-quotes": ["error", "prefer-single"],
     "react/forbid-prop-types": "off",
     "object-curly-newline": "off",
-    "react/no-danger": "off"
+    "react/no-danger": "off",
+    "linebreak-style": "off"
   },
   "env": {
     "browser": true
