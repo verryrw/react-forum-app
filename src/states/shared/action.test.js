@@ -1,5 +1,11 @@
-import { describe, it, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, beforeEach, afterEach, vi, expect } from 'vitest';
+import { hideLoading, showLoading } from 'react-redux-loading-bar';
+
+import { receiveThreadsActionCreator } from '../threads/action';
+import { receiveUsersActionCreator } from '../users/action';
 import api from '../../utils/network-api';
+import asyncPopulateUsersAndThreads from './action';
+
 /*
  * skenario test
  *
@@ -54,26 +60,53 @@ const fakeErrorResponse = new Error('Ups, something went wrong');
 describe('asyncPopulateUsersAndThreads thunk', () => {
   // backup and restore
   beforeEach(() => {
-    api.getUsersBackup = api.getUsers;
-    api.getThreadsBackup = api.getThreads;
+    api._getUsers = api.getUsers;
+    api._getThreads = api.getThreads;
   });
 
   afterEach(() => {
-    api.getUsers = api.getUsersBackup;
-    api.getThreads = api.getThreadsBackup;
+    api.getUsers = api._getUsers;
+    api.getThreads = api._getThreads;
 
-    delete api.getUsersBackup;
-    delete api.getThreadsBackup;
+    delete api._getUsers;
+    delete api._getThreads;
   });
 
   it('should dispatch action correctly when data fetching success', async () => {
     // arrange
     api.getUsers = () => Promise.resolve(fakeUsersResponse);
     api.getThreads = () => Promise.resolve(fakeThreadsResponse);
-
-    // action
     const dispatch = vi.fn();
 
+    // action
+    await asyncPopulateUsersAndThreads()(dispatch);
+
     // assert
+    expect(dispatch).toHaveBeenCalledWith(showLoading());
+    expect(dispatch).toHaveBeenCalledWith(
+      receiveThreadsActionCreator(fakeThreadsResponse),
+    );
+    expect(dispatch).toHaveBeenCalledWith(
+      receiveUsersActionCreator(fakeUsersResponse),
+    );
+    expect(dispatch).toHaveBeenCalledWith(hideLoading());
+  });
+
+  it('should dispatch action and call alert correctly when data fetching failed', async () => {
+    // arrange
+    api.getUsers = () => Promise.reject(fakeErrorResponse);
+    api.getThreads = () => Promise.reject(fakeErrorResponse);
+    const dispatch = vi.fn();
+    window.alert = vi.fn();
+
+    // action
+    await asyncPopulateUsersAndThreads()(dispatch);
+
+    // assert
+    expect(dispatch).toHaveBeenCalled(
+      receiveThreadsActionCreator(fakeThreadsResponse),
+    );
+    expect(dispatch).toHaveBeenCalled(hideLoading());
+    expect(window.alert).toHaveBeenCalled('halo');
   });
 });

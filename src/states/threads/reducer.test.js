@@ -8,7 +8,7 @@ import {
 } from './action';
 
 describe('threadsReducer function', () => {
-  it('should return the initial state when given by unknown action', () => {
+  it('should return the initial state when given by UNKNOWN action', () => {
     // arrange
     const initialState = [];
     const action = {

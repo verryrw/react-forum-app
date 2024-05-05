@@ -1,14 +1,19 @@
 {
   "extends": ["airbnb"],
+  "plugins": ["react", "react-hooks", "cypress"],
   "rules": {
     "no-alert": "off",
     "jsx-quotes": ["error", "prefer-single"],
     "react/forbid-prop-types": "off",
     "object-curly-newline": "off",
     "react/no-danger": "off",
-    "linebreak-style": "off"
+    "linebreak-style": "off",
+    "no-underscore-dangle": "off"
   },
   "env": {
-    "browser": true
+    "browser": true,
+    "es2021": true,
+    "node": true,
+    "cypress/globals": true
   }
 }

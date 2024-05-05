@@ -1,6 +1,6 @@
 import { getAccessToken } from './local-api';
 
-const api = () => {
+const api = (() => {
   const BASE_URL = 'https://forum-api.dicoding.dev/v1';
 
   async function register({ name, email, password }) {
@@ -244,6 +244,6 @@ const api = () => {
     downVoteComment,
     neutralizeVoteComment,
   };
-};
+})();
 
 export default api;
