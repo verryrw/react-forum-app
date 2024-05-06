@@ -7,20 +7,15 @@ import { BsReply } from 'react-icons/bs';
 
 import convertDateToTimeago from '../utils';
 import Badge from './Badge';
-import {
-  asyncToggleThreadDislike,
-  asyncToggleThreadLike,
-} from '../states/threads/action';
+import { asyncToggleThreadDislike, asyncToggleThreadLike } from '../states/threads/action';
 
 export default function ThreadItem({ thread }) {
   const dispatch = useDispatch();
   const { authUser } = useSelector((states) => states);
-  const isLikedByMe = authUser === null
-    ? ''
-    : thread.upVotesBy.find((upVoteId) => upVoteId === authUser.id);
-  const isDislikedByMe = authUser === null
-    ? ''
-    : thread.downVotesBy.find((downVoteId) => downVoteId === authUser.id);
+
+  const isLikedByMe = authUser === null ? '' : thread.upVotesBy.find((upVoteId) => upVoteId === authUser.id);
+
+  const isDislikedByMe = authUser === null ? '' : thread.downVotesBy.find((downVoteId) => downVoteId === authUser.id);
 
   function onLikeHandler() {
     dispatch(asyncToggleThreadLike(thread.id));
@@ -76,6 +71,7 @@ export default function ThreadItem({ thread }) {
         <span>{convertDateToTimeago(new Date(thread.createdAt))}</span>
         <span>
           Dibuat oleh
+          {' '}
           <b>{thread.name}</b>
         </span>
       </div>
