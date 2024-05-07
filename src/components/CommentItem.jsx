@@ -12,10 +12,8 @@ import {
 export default function CommentItem({ comment, threadId }) {
   const { authUser } = useSelector((states) => states);
   const dispatch = useDispatch();
-  const isLikedByMe =
-    authUser === null ? '' : comment.upVotesBy.find((upVoteId) => upVoteId === authUser.id);
-  const isDislikedByMe =
-    authUser === null ? '' : comment.downVotesBy.find((downVoteId) => downVoteId === authUser.id);
+  const isLikedByMe = authUser === null ? '' : comment.upVotesBy.find((upVoteId) => upVoteId === authUser.id);
+  const isDislikedByMe = authUser === null ? '' : comment.downVotesBy.find((downVoteId) => downVoteId === authUser.id);
 
   function onCommentLikeHandler() {
     dispatch(asyncToggleThreadDetailCommentLike(threadId, comment.id));

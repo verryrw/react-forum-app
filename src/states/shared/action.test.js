@@ -99,8 +99,8 @@ describe('asyncPopulateUsersAndThreads thunk', () => {
     await asyncPopulateUsersAndThreads()(dispatch);
 
     // assert
-    expect(dispatch).toHaveBeenCalled(receiveThreadsActionCreator(fakeThreadsResponse));
-    expect(dispatch).toHaveBeenCalled(hideLoading());
-    expect(window.alert).toHaveBeenCalled(fakeErrorResponse);
+    expect(dispatch).toHaveBeenCalledWith(showLoading());
+    expect(window.alert).toHaveBeenCalledWith(fakeErrorResponse.message);
+    expect(dispatch).toHaveBeenCalledWith(hideLoading());
   });
 });

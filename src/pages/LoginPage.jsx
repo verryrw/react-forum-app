@@ -21,7 +21,8 @@ export default function LoginPage() {
       <h1 className='text-xl font-bold mb-4'>Login</h1>
       <LoginInput onLogin={onLogin} />
       <p className='mt-4 text-center'>
-        Belum punya akun?{' '}
+        Belum punya akun?
+        {' '}
         <Link
           to='/register'
           className='text-[#fd7014] font-bold underline'

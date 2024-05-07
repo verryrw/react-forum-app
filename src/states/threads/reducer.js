@@ -32,8 +32,8 @@ function threadsReducer(threads = [], action = {}) {
             ),
             downVotesBy: thread.downVotesBy.includes(action.payload.userId)
               ? thread.downVotesBy.filter(
-                  (downVoteUserId) => downVoteUserId !== action.payload.userId,
-                )
+                (downVoteUserId) => downVoteUserId !== action.payload.userId,
+              )
               : [...thread.downVotesBy, action.payload.userId],
           };
         }

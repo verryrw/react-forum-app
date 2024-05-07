@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import TextInput from './TextInput';
 import useInput from '../hooks/useInput';
@@ -43,5 +44,9 @@ function RegisterInput({ onRegister }) {
     </form>
   );
 }
+
+RegisterInput.propTypes = {
+  onRegister: PropTypes.func.isRequired,
+};
 
 export default RegisterInput;
