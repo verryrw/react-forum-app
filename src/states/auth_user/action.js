@@ -34,11 +34,13 @@ function asyncSetAuthUser(email, password) {
       putAccessToken(token);
       const authUser = await api.getUserLogged(token);
       dispatch(setAuthUserActionCreator(authUser));
+      return true;
     } catch (e) {
       alert(e.message);
+      return false;
+    } finally {
+      dispatch(hideLoading());
     }
-
-    dispatch(hideLoading());
   };
 }
 

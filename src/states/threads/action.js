@@ -54,11 +54,13 @@ function asyncAddThread({ title, category, body }) {
       const response = await api.addThread({ title, category, body });
       dispatch(addThreadActionCreator(response));
       alert('Successfully added thread');
+      return true;
     } catch (e) {
       alert(e.message);
+      return false;
+    } finally {
+      dispatch(hideLoading());
     }
-
-    dispatch(hideLoading());
   };
 }
 

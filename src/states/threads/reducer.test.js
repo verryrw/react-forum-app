@@ -89,7 +89,7 @@ describe('threadsReducer function', () => {
     const nextState = threadsReducer(initialState, action);
 
     // assert
-    expect(nextState).toEqual([...initialState, newThread]);
+    expect(nextState).toEqual([newThread, ...initialState]);
   });
 
   it('should return threads with a toggled like thread when given by TOGGLE_LIKE_THREAD action', () => {

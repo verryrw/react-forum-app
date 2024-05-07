@@ -1,12 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export default function TextInput({
-  type = 'text',
-  placeholder,
-  value,
-  onChangeHandler,
-}) {
+export default function TextInput({ type = 'text', placeholder, value, onChangeHandler }) {
   return (
     <input
       type={type}
@@ -14,7 +9,6 @@ export default function TextInput({
       placeholder={placeholder}
       value={value}
       onChange={onChangeHandler}
-      required
     />
   );
 }

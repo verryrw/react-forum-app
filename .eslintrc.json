@@ -8,7 +8,8 @@
     "object-curly-newline": "off",
     "react/no-danger": "off",
     "linebreak-style": "off",
-    "no-underscore-dangle": "off"
+    "no-underscore-dangle": "off",
+    "react/jsx-no-bind": "off"
   },
   "env": {
     "browser": true,

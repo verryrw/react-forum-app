@@ -83,12 +83,8 @@ describe('asyncPopulateUsersAndThreads thunk', () => {
 
     // assert
     expect(dispatch).toHaveBeenCalledWith(showLoading());
-    expect(dispatch).toHaveBeenCalledWith(
-      receiveThreadsActionCreator(fakeThreadsResponse),
-    );
-    expect(dispatch).toHaveBeenCalledWith(
-      receiveUsersActionCreator(fakeUsersResponse),
-    );
+    expect(dispatch).toHaveBeenCalledWith(receiveThreadsActionCreator(fakeThreadsResponse));
+    expect(dispatch).toHaveBeenCalledWith(receiveUsersActionCreator(fakeUsersResponse));
     expect(dispatch).toHaveBeenCalledWith(hideLoading());
   });
 
@@ -103,10 +99,8 @@ describe('asyncPopulateUsersAndThreads thunk', () => {
     await asyncPopulateUsersAndThreads()(dispatch);
 
     // assert
-    expect(dispatch).toHaveBeenCalled(
-      receiveThreadsActionCreator(fakeThreadsResponse),
-    );
+    expect(dispatch).toHaveBeenCalled(receiveThreadsActionCreator(fakeThreadsResponse));
     expect(dispatch).toHaveBeenCalled(hideLoading());
-    expect(window.alert).toHaveBeenCalled('halo');
+    expect(window.alert).toHaveBeenCalled(fakeErrorResponse);
   });
 });

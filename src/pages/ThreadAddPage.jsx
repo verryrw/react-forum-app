@@ -8,15 +8,18 @@ import useInput from '../hooks/useInput';
 import { asyncAddThread } from '../states/threads/action';
 
 export default function ThreadAddPage() {
-  const navigate = useNavigate();
   const [title, titleChangeHandler] = useInput();
   const [category, categoryChangeHandler] = useInput();
   const [body, setBody] = useState('');
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   async function onSubmitHandler(event) {
     event.preventDefault();
-    dispatch(asyncAddThread({ title, category, body }));
+    const isAddSuccess = await dispatch(asyncAddThread({ title, category, body }));
+    if (isAddSuccess) {
+      navigate('/', { replace: true });
+    }
   }
 
   return (

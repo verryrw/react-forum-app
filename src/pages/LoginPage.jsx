@@ -1,47 +1,27 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
-import TextInput from '../components/TextInput';
-import useInput from '../hooks/useInput';
+import LoginInput from '../components/LoginInput';
 import { asyncSetAuthUser } from '../states/auth_user/action';
 
 export default function LoginPage() {
-  const [email, emailChangeHandler] = useInput();
-  const [password, passwordChangeHandler] = useInput();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  function onSubmitHandler(event) {
-    event.preventDefault();
-    dispatch(asyncSetAuthUser(email, password));
+  async function onLogin({ email, password }) {
+    const res = await dispatch(asyncSetAuthUser(email, password));
+    if (res) {
+      navigate('/');
+    }
   }
 
   return (
     <div className='p-4'>
       <h1 className='text-xl font-bold mb-4'>Login</h1>
-      <form onSubmit={onSubmitHandler}>
-        <TextInput
-          placeholder='Email'
-          type='email'
-          value={email}
-          onChangeHandler={emailChangeHandler}
-        />
-        <TextInput
-          placeholder='Password'
-          type='password'
-          value={password}
-          onChangeHandler={passwordChangeHandler}
-        />
-        <button
-          type='submit'
-          className='w-full border border-[#fd7014] p-2 mt-2 rounded-md'
-        >
-          Login
-        </button>
-      </form>
+      <LoginInput onLogin={onLogin} />
       <p className='mt-4 text-center'>
-        Belum punya akun?
-        {' '}
+        Belum punya akun?{' '}
         <Link
           to='/register'
           className='text-[#fd7014] font-bold underline'

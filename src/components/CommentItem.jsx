@@ -12,12 +12,10 @@ import {
 export default function CommentItem({ comment, threadId }) {
   const { authUser } = useSelector((states) => states);
   const dispatch = useDispatch();
-  const isLikedByMe = authUser === null
-    ? ''
-    : comment.upVotesBy.find((upVoteId) => upVoteId === authUser.id);
-  const isDislikedByMe = authUser === null
-    ? ''
-    : comment.downVotesBy.find((downVoteId) => downVoteId === authUser.id);
+  const isLikedByMe =
+    authUser === null ? '' : comment.upVotesBy.find((upVoteId) => upVoteId === authUser.id);
+  const isDislikedByMe =
+    authUser === null ? '' : comment.downVotesBy.find((downVoteId) => downVoteId === authUser.id);
 
   function onCommentLikeHandler() {
     dispatch(asyncToggleThreadDetailCommentLike(threadId, comment.id));
@@ -26,79 +24,6 @@ export default function CommentItem({ comment, threadId }) {
   function onCommentDislikeHandler() {
     dispatch(asyncToggleThreadDetailCommentDislike(threadId, comment.id));
   }
-
-  // const [isLike, setIsLike] = useState(isLikedByMe);
-  // const [isDislike, setIsDislike] = useState(isDislikedByMe);
-  // const [upVotesBy, setUpVotesBy] = useState(comment.upVotesBy);
-  // const [downVotesBy, setDownVotesBy] = useState(comment.downVotesBy);
-
-  // function pushIfNotExists(array, item) {
-  //   const newArray = array;
-  //   if (newArray.indexOf(item) === -1) {
-  //     newArray.push(item);
-  //   }
-  //   return newArray;
-  // }
-
-  // function resetLikeAndDislike() {
-  //   setIsLike(false);
-  //   setIsDislike(false);
-  //   setUpVotesBy(
-  //     comment.upVotesBy.filter((upVoteId) => upVoteId !== authUser.id)
-  //   );
-  //   setDownVotesBy(
-  //     comment.downVotesBy.filter((downVoteId) => downVoteId !== authUser.id)
-  //   );
-  // }
-
-  // async function onNeutralizeHandler() {
-  //   resetLikeAndDislike();
-
-  //   const response = await neutralizeVoteComment(threadId, comment.id);
-  //   if (response.error) {
-  //     alert(`gagal neutralize: ${response.message}`);
-  //   } else {
-  //     console.log('berhasil neutralize');
-  //   }
-  // }
-
-  // async function onLikeHandler() {
-  //   if (!authUser) {
-  //     alert('Please login first');
-  //     return;
-  //   }
-  //   resetLikeAndDislike();
-  //   setIsLike(true);
-  //   setUpVotesBy(pushIfNotExists(comment.upVotesBy, authUser.id));
-
-  //   const response = await upVoteComment(threadId, comment.id);
-  //   if (response.error) {
-  //     alert(`gagal like: ${response.message}`);
-  //     setIsLike(false);
-  //     setUpVotesBy(comment.upVotesBy.length);
-  //   } else {
-  //     console.log('berhasil like');
-  //   }
-  // }
-
-  // async function onDislikeHandler() {
-  //   if (!authUser) {
-  //     alert('Please login first');
-  //     return;
-  //   }
-  //   resetLikeAndDislike();
-  //   setIsDislike(true);
-  //   setDownVotesBy(pushIfNotExists(comment.downVotesBy, authUser.id));
-
-  //   const response = await downVoteComment(threadId, comment.id);
-  //   if (response.error) {
-  //     alert(`gagal dislike: ${response.message}`);
-  //     setIsDislike(false);
-  //     setDownVotesBy(comment.downVoteComments);
-  //   } else {
-  //     console.log('berhasil dislike');
-  //   }
-  // }
 
   return (
     <div>
