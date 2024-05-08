@@ -6,7 +6,7 @@ export default function Header() {
     <header>
       <div className='bg-[#fd7014] text-white p-4'>
         <h1>
-          <Link to='/'>DICODING FORUM APP</Link>
+          <Link to='/'>DICODING FORUM APPLICATION</Link>
         </h1>
       </div>
     </header>
