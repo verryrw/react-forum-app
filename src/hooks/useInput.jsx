@@ -7,5 +7,5 @@ export default function useInput() {
     setState(event.target.value);
   }
 
-  return [state, onChangeHandler, kajfdf];
+  return [state, onChangeHandler];
 }
