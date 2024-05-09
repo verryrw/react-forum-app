@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 
 import RegisterInput from '../components/RegisterInput';
 import { asyncRegister } from '../states/users/action';
+import { Button } from '../stories/Button';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -13,8 +14,11 @@ export default function RegisterPage() {
     navigate(-1, { replace: true });
   }
 
-  function onRegister({ name, email, password }) {
-    dispatch(asyncRegister({ name, email, password }));
+  async function onRegister({ name, email, password }) {
+    const res = await dispatch(asyncRegister({ name, email, password }));
+    if (res) {
+      navigate('/');
+    }
   }
 
   return (
@@ -22,14 +26,11 @@ export default function RegisterPage() {
       <h1 className='text-xl font-bold mb-4'>Daftar</h1>
       <RegisterInput onRegister={onRegister} />
       <div className='flex justify-center'>
-        <button
-          type='button'
-          aria-label='button-back'
-          className='mt-3 underline text-[#fd7014] font-bold'
+        <Button
+          variant='outlined'
+          label='Kembali'
           onClick={onNavigateBack}
-        >
-          Kembali
-        </button>
+        />
       </div>
     </div>
   );

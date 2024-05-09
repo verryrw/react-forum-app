@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import TextInput from './TextInput';
 import useInput from '../hooks/useInput';
+import { Button } from '../stories/Button';
 
 function RegisterInput({ onRegister }) {
   const [name, nameChangeHandler] = useInput();
@@ -34,13 +35,12 @@ function RegisterInput({ onRegister }) {
         value={password}
         onChangeHandler={passwordChangeHandler}
       />
-      <button
+      <Button
+        primary
         type='submit'
-        className='w-full border border-[#fd7014] p-2 mt-2 rounded-md'
+        label='Daftar'
         onClick={onSubmitHandler}
-      >
-        Daftar
-      </button>
+      />
     </form>
   );
 }
