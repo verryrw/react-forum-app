@@ -1,5 +1,5 @@
 {
-  "extends": ["airbnb"],
+  "extends": ["airbnb", "plugin:storybook/recommended"],
   "plugins": ["react", "react-hooks", "cypress"],
   "rules": {
     "no-alert": "off",
@@ -9,7 +9,11 @@
     "react/no-danger": "off",
     "linebreak-style": "off",
     "no-underscore-dangle": "off",
-    "react/jsx-no-bind": "off"
+    "react/jsx-no-bind": "off",
+    "react/function-component-definition": "off",
+    "import/prefer-default-export": "off",
+    "react/jsx-props-no-spreading": "off",
+    "react/jsx-parentheses": "off"
   },
   "env": {
     "browser": true,

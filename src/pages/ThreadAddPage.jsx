@@ -6,6 +6,7 @@ import ButtonBack from '../components/ButtonBack';
 import TextInput from '../components/TextInput';
 import useInput from '../hooks/useInput';
 import { asyncAddThread } from '../states/threads/action';
+import { Button } from '../stories/Button';
 
 export default function ThreadAddPage() {
   const [title, titleChangeHandler] = useInput();
@@ -53,24 +54,20 @@ export default function ThreadAddPage() {
               setBody(event.target.innerHTML);
             }}
           />
-          <button
+          <Button
+            variant='filled'
+            label='Buat'
             type='submit'
-            className='w-full bg-[#fd7014] p-2 rounded-md'
-          >
-            Buat
-          </button>
+          />
         </form>
         <div className='flex justify-center'>
-          <button
-            type='button'
-            aria-label='button-back'
-            className='mt-3 underline text-[#fd7014] font-bold'
+          <Button
+            variant='outlined'
+            label='Batal'
             onClick={() => {
               navigate('/', { replace: true });
             }}
-          >
-            Batal
-          </button>
+          />
         </div>
       </section>
     </div>

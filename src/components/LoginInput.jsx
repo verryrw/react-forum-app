@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import useInput from '../hooks/useInput';
 import TextInput from './TextInput';
+import { Button } from '../stories/Button';
 
 function LoginInput({ onLogin }) {
   const [email, emailChangeHandler] = useInput();
@@ -27,13 +28,11 @@ function LoginInput({ onLogin }) {
         value={password}
         onChangeHandler={passwordChangeHandler}
       />
-      <button
-        type='submit'
-        className='w-full border border-[#fd7014] p-2 mt-2 rounded-md'
+      <Button
+        primary
+        label='Login'
         onClick={onSubmitHandler}
-      >
-        Login
-      </button>
+      />
     </form>
   );
 }

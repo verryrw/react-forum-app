@@ -22,11 +22,13 @@ function asyncRegister({ name, email, password }) {
     try {
       await api.register({ name, email, password });
       dispatch(asyncSetAuthUser(email, password));
+      return true;
     } catch (e) {
       alert(e.message);
+      return false;
+    } finally {
+      dispatch(hideLoading());
     }
-
-    dispatch(hideLoading());
   };
 }
 
